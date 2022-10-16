@@ -1,0 +1,31 @@
+@use '../../commonStyles/variables'
+
+.terms-page
+    .title,
+    .content
+        font-family: variables.$inter-font
+        color: variables.$black-color
+        font-style: normal
+
+    .title
+        font-weight: 700
+        font-size: 35px
+        line-height: 42px
+        margin: 50px 0 40px
+
+    .content
+        p
+            font-weight: 400
+            font-size: 25px
+            line-height: 30px
+
+    @media (max-width: 768px)
+        .title
+            font-size: 17px
+            line-height: 21px
+            margin: 25px 0
+
+        .content
+            p
+                font-size: 15px
+                line-height: 18px

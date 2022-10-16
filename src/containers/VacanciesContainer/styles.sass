@@ -1,0 +1,54 @@
+@use '../../commonStyles/variables'
+
+.vacancies-page
+    &-header
+        .add-btn
+            min-width: 130px
+            padding: 10px 15px
+
+.ant-select-dropdown.descriptions-select-list
+    max-width: 360px
+    background: none
+    padding-left: 20px
+    box-shadow: none
+
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled)
+        background-color: variables.$white-color
+
+    .descriptions-select-dropdown
+        background: variables.$white-color
+        border-radius: 10px
+        padding: 10px
+
+    .descriptions-modal-item
+        display: flex
+        align-items: center
+        justify-content: space-between
+        padding: 12px 0
+        border-bottom: 1px solid #6C7578
+
+        p
+            margin: 0
+            color: #6C7578
+            padding-left: 24px
+            font-size: 15px
+            line-height: 18px
+
+        &::before
+            content: '',
+            display: block
+            position: absolute
+            transform: translateX(100%)
+            left: 0
+            width: 12px
+            height: 12px
+            border: 2px solid #6C7578
+            border-radius: 50%
+
+    .descriptions-modal-btn
+        padding: 0
+        background: none
+        border: none
+        box-shadow: none
+        color: #6C7578

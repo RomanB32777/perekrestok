@@ -1,0 +1,47 @@
+@use '../../../commonStyles/variables'
+
+.application-modificator
+    .ant-modal-content
+        background-image: url('../../../assets/bg_form.png')
+        background-size: 75%
+        background-position: 145% 100%
+        background-repeat: no-repeat
+
+.application-modal
+    &-form
+        width: 50%
+
+.application-title
+    font-family: variables.$jakarta-font
+    font-weight: 700
+    font-size: 35px
+    line-height: 35px
+    margin: 50px 0
+
+.modal-title
+    font-weight: 700
+    font-size: 35px
+
+.application-btn
+    padding: 15px 60px
+    font-size: 20px
+    margin-top: 20px
+
+.terms-link
+    text-decoration: underline
+
+@media (max-width: 768px)
+    .application-title
+        font-size: 25px
+        line-height: 30px
+        text-align: center
+        margin: 50px 0 30px
+
+@media (max-width: 992px)
+    .application-modificator
+        .ant-modal-content
+            background-image: none
+
+    .application-modal
+        &-form
+            width: 100%
