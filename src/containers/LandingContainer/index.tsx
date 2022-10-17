@@ -105,6 +105,7 @@ const LandingContainer = () => {
               style={{
                 width: "100%",
               }}
+              gutter={[0, 18]}
             >
               {properties.map((property, key) => (
                 <Col
@@ -132,7 +133,7 @@ const LandingContainer = () => {
         <div className="landing__row-panel mainpage_steps">
           <div className="container">
             <p className="block-title">Три простых шага до новой работы</p>
-            <Row justify="space-around">
+            <Row justify="space-around" gutter={[0, 18]}>
               {steps.map((step, i) => (
                 <Col
                   className="landing__row-panel_item"

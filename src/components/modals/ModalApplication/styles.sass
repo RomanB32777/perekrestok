@@ -3,9 +3,15 @@
 .application-modificator
     .ant-modal-content
         background-image: url('../../../assets/bg_form.png')
-        background-size: 75%
-        background-position: 145% 100%
+        background-size: 65%
+        background-position: 115% 100%
         background-repeat: no-repeat
+
+        .ant-modal-body
+            padding: 0
+
+        .modal-content-wrapper
+            padding: 0 52px 10px
 
 .application-modal
     &-form
@@ -16,7 +22,7 @@
     font-weight: 700
     font-size: 35px
     line-height: 35px
-    margin: 50px 0
+    margin: 20px 0 30px
 
 .modal-title
     font-weight: 700
@@ -31,11 +37,16 @@
     text-decoration: underline
 
 @media (max-width: 768px)
+    .application-modificator
+        .ant-modal-content
+            .modal-content-wrapper
+                padding: 0
+
     .application-title
         font-size: 25px
         line-height: 30px
         text-align: center
-        margin: 50px 0 30px
+        margin: 20px 0 30px
 
 @media (max-width: 992px)
     .application-modificator

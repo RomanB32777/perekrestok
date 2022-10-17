@@ -1,6 +1,6 @@
 FROM node:14-alpine AS builder
 
-WORKDIR /landing
+WORKDIR /perekrestok
 
 COPY ./package.json ./
 
@@ -8,9 +8,7 @@ RUN npm install
 
 COPY . .
 
-ARG NODE_ENV
-
-ENV REACT_APP_NODE_ENV=$NODE_ENV
+EXPOSE 8099
 
 RUN npm run build
 
@@ -27,4 +25,4 @@ COPY ./nginx.config /etc/nginx/nginx.template
 
 CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/nginx.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
 
-COPY --from=builder /landing/build /usr/share/nginx/html
+COPY --from=builder /perekrestok/build /usr/share/nginx/html
