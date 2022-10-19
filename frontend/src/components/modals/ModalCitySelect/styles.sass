@@ -1,0 +1,53 @@
+@use '../../../commonStyles/variables'
+
+.modal-title
+    font-weight: 700
+    font-size: 35px
+
+.city-modal
+    margin: 0 50px
+    max-height: 380px
+    overflow-y: auto
+
+.city-list
+    display: grid
+    justify-content: space-between
+    grid-template-columns: 40% 45%
+    padding: 0 50px
+
+.city-item
+    display: flex
+    align-items: center
+    margin-bottom: 20px
+    margin-left: 20px
+    cursor: pointer
+
+    p
+        font-family: variables.$jakarta-font
+        font-style: normal
+        font-weight: 400
+        font-size: 25px
+        line-height: 30px
+        margin: 0
+        margin-left: 20px
+
+@media (max-width: 768px)
+    .modal-title
+        font-size: 25px
+        line-height: 30px
+
+@media (max-width: 576px)
+    .modal-title
+        font-size: 25px
+        margin: 0
+
+    .city-modal
+        margin: 0
+
+    .city-list
+        padding: 0
+        grid-template-columns: 50% 50%
+
+    .city-item
+        margin-left: 0
+
