@@ -1,59 +1,27 @@
 {
-  "name": "landing",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.11.62",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "antd": "^4.23.4",
-    "antd-country-phone-input": "^4.4.0",
-    "axios": "^0.27.2",
-    "clsx": "^1.2.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-notifications-component": "^4.0.1",
-    "react-redux": "^8.0.4",
-    "react-router-dom": "^6.4.1",
-    "react-router-hash-link": "^2.4.3",
-    "react-scripts": "5.0.1",
-    "redux": "^4.2.0",
-    "redux-saga": "^1.2.1",
-    "sass": "^1.55.0",
-    "typescript": "^4.8.4",
-    "web-vitals": "^2.1.4",
-    "world_countries_lists": "^2.6.0"
-  },
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "frontend": "npm start --prefix frontend",
+    "backend": "npm run server --prefix backend",
+    "frontend:install": "npm install --prefix frontend",
+    "frontend:build": "npm  run build --prefix frontend",
+    "backend:install": "npm install --prefix backend",
+    "install": "concurrently \"npm run frontend:install\" \"npm run backend:install\"",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "dumpSql": "docker exec -i perek_db_1 pg_dump --username postgres -d donut > /home/deploy/perek/dump.sql",
+    "exexSql": "docker exec -it perek_db_1 psql  -U postgres -d donut",
+    "dockerUp": "docker-compose up -d --build",
+    "dockerStop": "docker-compose stop",
+    "dockerDown": "docker-compose down",
+    "dockerRmiDangling": "docker rmi $(docker images -f dangling=true -q)",
+    "dockerClear": "docker system prune -a -f"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "author": "Roman <r.bogdanovskiy@onpoint.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.2.2"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@types/react-router-hash-link": "^2.4.5",
-    "redux-devtools-extension": "^2.13.9"
-  }
+  "devDependencies": {}
 }
