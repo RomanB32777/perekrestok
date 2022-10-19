@@ -1,8 +1,10 @@
 import { HTMLInputTypeAttribute } from "react";
-import { Col, Row } from "antd";
+import { Col, Input, Row } from "antd";
 import clsx from "clsx";
-import "./styles.sass";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import "./styles.sass";
+
+const { TextArea } = Input;
 
 const FormInput = ({
   label,
@@ -64,7 +66,7 @@ const FormInput = ({
             <div className="formInput__input_addonBefore">{addonBefore}</div>
           )}
           {isTextarea ? (
-            <textarea
+            <TextArea
               className={clsx({
                 withAddonAfter: Boolean(addonAfter),
                 withAddonBefore: Boolean(addonBefore),
@@ -77,7 +79,7 @@ const FormInput = ({
               onChange={(e) => setValue && setValue(e.target.value)}
             />
           ) : (
-            <input
+            <Input
               className={clsx({
                 withAddonAfter: Boolean(addonAfter),
                 withAddonBefore: Boolean(addonBefore),

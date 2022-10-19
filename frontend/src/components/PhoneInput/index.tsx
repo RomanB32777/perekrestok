@@ -33,6 +33,11 @@ const PhoneInput = ({
                   phone: newValue.phone?.replace(/[^0-9+]/g, ""),
                 });
           }}
+          onFocus={() =>
+            typeof value.phone === "string" &&
+            value.phone.length <= String(value.code).length &&
+            setValue({ ...value, phone: `+${value.code}` })
+          }
           placeholder="Номер телефона"
         />
       </ConfigProvider>

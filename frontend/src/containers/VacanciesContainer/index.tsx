@@ -1,21 +1,23 @@
 import { Col, Input, InputRef, Row, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { PlusOutlined } from "@ant-design/icons";
+
 import BaseButton from "../../components/BaseButton";
 import ConfirmPopup from "../../components/ConfirmPopup";
 import ModalAdmin from "../../components/modals/ModalAdmin";
 import PageTitle from "../../components/PageTitle";
-import { CrossIcon, PencilIcon, TrashBinIcon } from "../../icons/icons";
-import { PlusOutlined } from "@ant-design/icons";
-import { IAdminFormItem, IVacancy } from "../../types";
+import EmptyBlock from "../../components/EmptyBlock";
 
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import axiosClient from "../../axiosClient";
 import { getVacancies } from "../../store/types/Vacancies";
 import {
   addNotification,
   addSuccessNotification,
 } from "../../utils/notifications";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { IAdminFormItem, IVacancy } from "../../types";
+import { CrossIcon, PencilIcon, TrashBinIcon } from "../../icons/icons";
 
 import "./styles.sass";
 
@@ -284,7 +286,7 @@ const VacanciesContainer = () => {
           </Row>
         </div>
         <div className="data-list">
-          {Boolean(vacancies.length) &&
+          {Boolean(vacancies.length) ? (
             vacancies.map((vacancy) => (
               <div className="data-list-item" key={vacancy.vacancy_name}>
                 <Row justify="space-between">
@@ -320,7 +322,10 @@ const VacanciesContainer = () => {
                   </Col>
                 </Row>
               </div>
-            ))}
+            ))
+          ) : (
+            <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+          )}
         </div>
       </div>
       <ModalAdmin

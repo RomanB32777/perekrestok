@@ -4,8 +4,9 @@ import ModalComponent from "../ModalComponent";
 import FormInput from "../../FormInput";
 import BaseButton from "../../BaseButton";
 import SelectInput from "../../SelectInput";
-import { IAdminFormItem } from "../../../types";
 import UploadImage from "../../UploadImage";
+import { IAdminFormItem } from "../../../types";
+import { url } from "../../../consts";
 import "./styles.sass";
 
 // const formElements: { [type in adminFormItemTypes]: JSX.Element } = {
@@ -130,7 +131,7 @@ const renderFormComponent = <T extends { [key in keyof T]: IAdminFormItem }>({
       return (
         <UploadImage
           formats={["PNG", "JPG", "JPEG"]}
-          filePreview={value.preview}
+          filePreview={value.preview || url + value}
           setFile={({ preview, file }) =>
             setFormData({
               ...formData,

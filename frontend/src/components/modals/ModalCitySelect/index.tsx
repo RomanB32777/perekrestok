@@ -1,23 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useWindowDimensions from "../../../hooks/useWindowDimensions";
 import { NavigationIcon } from "../../../icons/icons";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { getCities, setSelectedCity } from "../../../store/types/Cities";
-import ModalApplication from "../ModalApplication";
+import EmptyBlock from "../../EmptyBlock";
 import ModalComponent from "../ModalComponent";
 import "./styles.sass";
-
-// const cities = [
-//   "Москва",
-//   "Санкт-Петербург",
-//   "Брянск",
-//   "Москва",
-//   "Белгород",
-//   "Брянск",
-//   "Москва",
-//   "Белгород",
-//   "Брянск",
-// ];
 
 const ModalCitySelect = ({
   isOpenModal,
@@ -29,16 +17,10 @@ const ModalCitySelect = ({
   const dispatch = useAppDispatch();
   const { cities } = useAppSelector((state) => state.cities);
   const { isTablet } = useWindowDimensions();
-  const [isOpenModalApplication, setIsOpenModalApplication] = useState(false);
 
   const selectCity = (city_name: string) => {
     dispatch(setSelectedCity(city_name));
     closeModal();
-    setIsOpenModalApplication(true);
-  };
-
-  const closeModalApplication = () => {
-    setIsOpenModalApplication(false);
   };
 
   useEffect(() => {
@@ -59,26 +41,26 @@ const ModalCitySelect = ({
         onCancel={closeModal}
       >
         <div className="city-modal">
-          <div className="city-list">
-            {cities.map(({ city_name }) => (
-              <div
-                key={city_name}
-                className="city-item"
-                onClick={() => selectCity(city_name)}
-              >
-                <div className="icon">
-                  <NavigationIcon />
+          {Boolean(cities.length) ? (
+            <div className="city-list">
+              {cities.map(({ city_name }) => (
+                <div
+                  key={city_name}
+                  className="city-item"
+                  onClick={() => selectCity(city_name)}
+                >
+                  <div className="icon">
+                    <NavigationIcon />
+                  </div>
+                  <p>{city_name}</p>
                 </div>
-                <p>{city_name}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyBlock description="Городов пока нет, но скоро появятся !" />
+          )}
         </div>
       </ModalComponent>
-      <ModalApplication
-        isOpenModal={isOpenModalApplication}
-        closeModal={closeModalApplication}
-      />
     </>
   );
 };

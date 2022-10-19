@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axiosClient from "../../axiosClient";
 import BaseButton from "../../components/BaseButton";
 import ConfirmPopup from "../../components/ConfirmPopup";
+import EmptyBlock from "../../components/EmptyBlock";
 import FormCheckbox from "../../components/FormCheckbox";
 import ModalAdmin from "../../components/modals/ModalAdmin";
 import PageTitle from "../../components/PageTitle";
@@ -199,7 +200,7 @@ const CitiesContainer = () => {
           </Row>
         </div>
         <div className="data-list">
-          {Boolean(cities.length) &&
+          {Boolean(cities.length) ? (
             cities.map((city) => (
               <div className="data-list-item" key={city.city_name}>
                 <Row justify="space-between">
@@ -233,7 +234,10 @@ const CitiesContainer = () => {
                   </Col>
                 </Row>
               </div>
-            ))}
+            ))
+          ) : (
+            <EmptyBlock description="Городов пока нет, но скоро появятся !" />
+          )}
         </div>
       </div>
       <ModalAdmin

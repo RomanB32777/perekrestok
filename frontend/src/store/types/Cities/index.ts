@@ -12,6 +12,8 @@ export const setCities = (payload: any) => {
 
 export const getSelectedCity = () => localStorage.getItem("city");
 
+export const removeSelectedCity = () => localStorage.removeItem("city");
+
 export const setSelectedCity = (payload: string) => {
   localStorage.setItem("city", payload);
   return { type: SET_SELECTED_CITY, payload };

@@ -17,6 +17,7 @@ import { getVacancies } from "../../store/types/Vacancies";
 import ModalApplication from "../../components/modals/ModalApplication";
 import "./styles.sass";
 import { IVacancy } from "../../types";
+import EmptyBlock from "../../components/EmptyBlock";
 
 const steps = [
   {
@@ -203,9 +204,9 @@ const LandingContainer = () => {
             <p className="block-title">
               Открытые <span className="green-back">вакансии</span>
             </p>
-            <Row gutter={[18, 18]}>
-              {Boolean(vacancies.length) &&
-                vacancies.map((vacancy) => (
+            {Boolean(vacancies.length) ? (
+              <Row gutter={[18, 18]}>
+                {vacancies.map((vacancy) => (
                   <Col xl={8} xs={24} key={vacancy.vacancy_id}>
                     <VacancyItem
                       vacancy={vacancy}
@@ -213,7 +214,10 @@ const LandingContainer = () => {
                     />
                   </Col>
                 ))}
-            </Row>
+              </Row>
+            ) : (
+              <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+            )}
           </div>
         </div>
       </div>

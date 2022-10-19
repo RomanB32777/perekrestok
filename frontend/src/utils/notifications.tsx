@@ -35,7 +35,7 @@ export const addAuthNotification = () =>
 
 export const addSuccessNotification = (message: string) =>
   addNotification({
-    title: "Success",
+    title: "Успех",
     message,
     type: "success",
   });

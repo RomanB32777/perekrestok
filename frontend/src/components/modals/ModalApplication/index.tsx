@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
 import axios from "axios";
 import { IVacancy } from "../../../types";
-import moment from "moment";
 import {
   addNotification,
   addSuccessNotification,
@@ -25,7 +24,7 @@ interface IApplicationData {
   second_name: string;
   phone: CountryPhoneInputValue;
   country: string;
-  date_birthday: string;
+  date_birthday: moment.Moment | undefined;
   vacancy: string;
   agreement: boolean;
 }
@@ -35,11 +34,11 @@ const initApplicationData: IApplicationData = {
   second_name: "",
   phone: {
     code: 7,
-    phone: "+7",
+    phone: "",
     short: "RU",
   },
   country: "Российская Федерация",
-  date_birthday: "",
+  date_birthday: undefined,
   vacancy: "",
   agreement: false,
 };
@@ -50,30 +49,52 @@ const ModalApplication = ({
   closeModal,
 }: {
   isOpenModal: boolean;
-  selectedVacancy?: IVacancy | null;
+  selectedVacancy: IVacancy | null;
   closeModal: () => void;
 }) => {
   const vacancies = useAppSelector((state) => state.vacancies);
+  const { selected_city } = useAppSelector((state) => state.cities);
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState<IApplicationData>({
     ...initApplicationData,
   });
 
-  const goToTermsPage = () => {
+  const closeApplicationModal = () => {
     closeModal();
+    setFormData({ ...initApplicationData });
+  };
+
+  const goToTermsPage = () => {
+    closeApplicationModal();
     navigate("terms");
   };
 
+  //   const response = await fetch(baseURL +   url, { //
+  //     method: 'POST', // *GET, POST, PUT, DELETE, etc.
+  //     mode: 'cors', // no-cors, *cors, same-origin
+  //     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+  //     credentials: 'same-origin', // include, *same-origin, omit
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //       // 'Content-Type': 'application/x-www-form-urlencoded',
+  //     },
+  //     redirect: 'follow', // manual, *follow, error
+  //     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  //     body: JSON.stringify(data) // body data type must match "Content-Type" header
+  //   });
+  //   const result = await response.json()
+  //   return result; // parses JSON response into native JavaScript objects
+  // }
+
   const createCandidate = async () => {
     try {
-      const { name, second_name, phone, vacancy, date_birthday, agreement } =
-        formData;
-      const findVacancy =
-        selectedVacancy ||
-        vacancies.find(({ vacancy_name }) => vacancy_name === vacancy);
-      if (findVacancy && agreement) {
-        const date = moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
+      const { name, second_name, phone, vacancy, date_birthday } = formData;
+      const findVacancy = vacancies.find(
+        ({ vacancy_name }) => vacancy_name === vacancy
+      );
+      if (findVacancy) {
+        const date = date_birthday?.toISOString(); // moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
         const { data } = await axios.post(
           "https://api.skillaz.ru/open-api/objects/candidates",
           {
@@ -84,18 +105,24 @@ const ModalApplication = ({
             AddWay: "Unknown",
             PhoneNumber: phone.phone,
             BirthDate: date,
-            // country,
+            CommonCandidateInfo: {
+              City: selected_city,
+              Country: country,
+            },
           },
           {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
           }
         );
         if (data.IsOk) {
           addSuccessNotification(
             `Ваша заявка принята! Номер кандидата - ${data.CandidateId}`
           );
-          closeModal();
-          setFormData({ ...initApplicationData });
+          closeApplicationModal();
         } else {
           addNotification({
             type: "danger",
@@ -128,13 +155,21 @@ const ModalApplication = ({
       setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
   }, [selectedVacancy]);
 
-  const { name, second_name, phone, country, vacancy, agreement } = formData;
+  const {
+    name,
+    second_name,
+    phone,
+    country,
+    vacancy,
+    date_birthday,
+    agreement,
+  } = formData;
 
   return (
     <ModalComponent
       open={isOpenModal}
       title=""
-      onCancel={closeModal}
+      onCancel={closeApplicationModal}
       modificator="application-modificator"
       width={1280}
       topModal
@@ -144,6 +179,15 @@ const ModalApplication = ({
           Заполните <span className="green-back">заявку</span> и мы вам
           перезвоним!
         </h1>
+        {/* <Form
+          form={form}
+          name="register"
+          onFinish={createCandidate}
+          scrollToFirstError
+          layout="vertical"
+        >
+        const [form] = Form.useForm();
+        </Form> */}
         <Row
           gutter={[0, 18]}
           className="application-modal-form"
@@ -203,6 +247,7 @@ const ModalApplication = ({
           <Col span={24}>
             <div className="form-element">
               <FormDatePicker
+                value={date_birthday}
                 setValue={(val) =>
                   setFormData({
                     ...formData,

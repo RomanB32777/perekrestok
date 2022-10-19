@@ -12,7 +12,7 @@
 *.vi
 *.zip
 *.dump
-*.sql
+# *.sql
 *~
 
 # OS or Editor folders

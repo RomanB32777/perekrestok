@@ -31,7 +31,7 @@ export const copyStr = (str: string) => {
     navigator.clipboard.writeText(str);
     addNotification({
       type: "success",
-      title: "Link successfully copied",
+      title: "Ссылка скопирована успешно",
     });
   } catch (error) {
     addNotification({
