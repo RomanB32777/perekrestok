@@ -20,6 +20,7 @@ import { IAdminFormItem, IVacancy } from "../../types";
 import { CrossIcon, PencilIcon, TrashBinIcon } from "../../icons/icons";
 
 import "./styles.sass";
+import Loader from "../../components/Loader";
 
 type IVacancyData = {
   [key in keyof IVacancy]: IAdminFormItem;
@@ -156,6 +157,8 @@ const initVacancyData: IVacancyData = {
 const VacanciesContainer = () => {
   const dispatch = useAppDispatch();
   const vacancies = useAppSelector((state) => state.vacancies);
+  const loading = useAppSelector((state) => state.loading);
+
   const { state } = useLocation();
 
   const [formData, setFormData] = useState<IVacancyData>({
@@ -285,48 +288,52 @@ const VacanciesContainer = () => {
             </Col>
           </Row>
         </div>
-        <div className="data-list">
-          {Boolean(vacancies.length) ? (
-            vacancies.map((vacancy) => (
-              <div className="data-list-item" key={vacancy.vacancy_name}>
-                <Row justify="space-between">
-                  <Col span={20}>
-                    <p className="data-list-item__name">
-                      {vacancy.vacancy_name}
-                    </p>
-                  </Col>
-                  <Col span={3}>
-                    <div className="data-list-item__btns">
-                      <div
-                        className="data-item__btn"
-                        onClick={(e) => openModal(e, vacancy)}
-                        style={{ marginRight: 10 }}
-                      >
-                        <PencilIcon />
-                      </div>
-                      <div
-                        className="data-item__btn"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-                          e.stopPropagation()
-                        }
-                      >
-                        <ConfirmPopup
-                          confirm={() => deleteVacancy(vacancy.vacancy_name)}
+        {loading ? (
+          <Loader size="big" />
+        ) : (
+          <div className="data-list">
+            {Boolean(vacancies.length) ? (
+              vacancies.map((vacancy) => (
+                <div className="data-list-item" key={vacancy.vacancy_name}>
+                  <Row justify="space-between">
+                    <Col span={20}>
+                      <p className="data-list-item__name">
+                        {vacancy.vacancy_name}
+                      </p>
+                    </Col>
+                    <Col span={3}>
+                      <div className="data-list-item__btns">
+                        <div
+                          className="data-item__btn"
+                          onClick={(e) => openModal(e, vacancy)}
+                          style={{ marginRight: 10 }}
                         >
-                          <div>
-                            <TrashBinIcon />
-                          </div>
-                        </ConfirmPopup>
+                          <PencilIcon />
+                        </div>
+                        <div
+                          className="data-item__btn"
+                          onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+                            e.stopPropagation()
+                          }
+                        >
+                          <ConfirmPopup
+                            confirm={() => deleteVacancy(vacancy.vacancy_name)}
+                          >
+                            <div>
+                              <TrashBinIcon />
+                            </div>
+                          </ConfirmPopup>
+                        </div>
                       </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            ))
-          ) : (
-            <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
-          )}
-        </div>
+                    </Col>
+                  </Row>
+                </div>
+              ))
+            ) : (
+              <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+            )}
+          </div>
+        )}
       </div>
       <ModalAdmin
         title={`${isEditMode ? "Изменить" : "Добавить"} вакансию`}

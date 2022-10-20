@@ -4,6 +4,7 @@ import { NavigationIcon } from "../../../icons/icons";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { getCities, setSelectedCity } from "../../../store/types/Cities";
 import EmptyBlock from "../../EmptyBlock";
+import Loader from "../../Loader";
 import ModalComponent from "../ModalComponent";
 import "./styles.sass";
 
@@ -16,6 +17,7 @@ const ModalCitySelect = ({
 }) => {
   const dispatch = useAppDispatch();
   const { cities } = useAppSelector((state) => state.cities);
+  const loading = useAppSelector((state) => state.loading);
   const { isTablet } = useWindowDimensions();
 
   const selectCity = (city_name: string) => {
@@ -24,8 +26,8 @@ const ModalCitySelect = ({
   };
 
   useEffect(() => {
-    dispatch(getCities());
-  }, []);
+    isOpenModal && dispatch(getCities());
+  }, [isOpenModal]);
 
   return (
     <>
@@ -40,26 +42,30 @@ const ModalCitySelect = ({
         centered={isTablet as boolean}
         onCancel={closeModal}
       >
-        <div className="city-modal">
-          {Boolean(cities.length) ? (
-            <div className="city-list">
-              {cities.map(({ city_name }) => (
-                <div
-                  key={city_name}
-                  className="city-item"
-                  onClick={() => selectCity(city_name)}
-                >
-                  <div className="icon">
-                    <NavigationIcon />
+        {loading ? (
+          <Loader size="big" />
+        ) : (
+          <div className="city-modal">
+            {Boolean(cities.length) ? (
+              <div className="city-list">
+                {cities.map(({ city_name }) => (
+                  <div
+                    key={city_name}
+                    className="city-item"
+                    onClick={() => selectCity(city_name)}
+                  >
+                    <div className="icon">
+                      <NavigationIcon />
+                    </div>
+                    <p>{city_name}</p>
                   </div>
-                  <p>{city_name}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock description="Городов пока нет, но скоро появятся !" />
-          )}
-        </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock description="Городов пока нет, но скоро появятся !" />
+            )}
+          </div>
+        )}
       </ModalComponent>
     </>
   );

@@ -6,6 +6,7 @@ import BaseButton from "../../components/BaseButton";
 import ConfirmPopup from "../../components/ConfirmPopup";
 import EmptyBlock from "../../components/EmptyBlock";
 import FormCheckbox from "../../components/FormCheckbox";
+import Loader from "../../components/Loader";
 import ModalAdmin from "../../components/modals/ModalAdmin";
 import PageTitle from "../../components/PageTitle";
 import { PencilIcon, TrashBinIcon } from "../../icons/icons";
@@ -73,6 +74,7 @@ const CitiesContainer = () => {
   const dispatch = useAppDispatch();
   const { cities } = useAppSelector((state) => state.cities);
   const vacancies = useAppSelector((state) => state.vacancies);
+  const loading = useAppSelector((state) => state.loading);
 
   const [formData, setFormData] = useState<ICityData>({
     ...initCityData,
@@ -199,46 +201,50 @@ const CitiesContainer = () => {
             </Col>
           </Row>
         </div>
-        <div className="data-list">
-          {Boolean(cities.length) ? (
-            cities.map((city) => (
-              <div className="data-list-item" key={city.city_name}>
-                <Row justify="space-between">
-                  <Col span={20}>
-                    <p className="data-list-item__name">{city.city_name}</p>
-                  </Col>
-                  <Col span={3}>
-                    <div className="data-list-item__btns">
-                      <div
-                        className="data-item__btn"
-                        onClick={(e) => openModal(e, city)}
-                        style={{ marginRight: 10 }}
-                      >
-                        <PencilIcon />
-                      </div>
-                      <div
-                        className="data-item__btn"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-                          e.stopPropagation()
-                        }
-                      >
-                        <ConfirmPopup
-                          confirm={() => deleteCity(city.city_name)}
+        {loading ? (
+          <Loader size="big" />
+        ) : (
+          <div className="data-list">
+            {Boolean(cities.length) ? (
+              cities.map((city) => (
+                <div className="data-list-item" key={city.city_name}>
+                  <Row justify="space-between">
+                    <Col span={20}>
+                      <p className="data-list-item__name">{city.city_name}</p>
+                    </Col>
+                    <Col span={3}>
+                      <div className="data-list-item__btns">
+                        <div
+                          className="data-item__btn"
+                          onClick={(e) => openModal(e, city)}
+                          style={{ marginRight: 10 }}
                         >
-                          <div>
-                            <TrashBinIcon />
-                          </div>
-                        </ConfirmPopup>
+                          <PencilIcon />
+                        </div>
+                        <div
+                          className="data-item__btn"
+                          onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+                            e.stopPropagation()
+                          }
+                        >
+                          <ConfirmPopup
+                            confirm={() => deleteCity(city.city_name)}
+                          >
+                            <div>
+                              <TrashBinIcon />
+                            </div>
+                          </ConfirmPopup>
+                        </div>
                       </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            ))
-          ) : (
-            <EmptyBlock description="Городов пока нет, но скоро появятся !" />
-          )}
-        </div>
+                    </Col>
+                  </Row>
+                </div>
+              ))
+            ) : (
+              <EmptyBlock description="Городов пока нет, но скоро появятся !" />
+            )}
+          </div>
+        )}
       </div>
       <ModalAdmin
         title={`${isEditMode ? "Изменить" : "Добавить"} город`}

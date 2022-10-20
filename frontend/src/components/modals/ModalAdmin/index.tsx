@@ -8,6 +8,8 @@ import UploadImage from "../../UploadImage";
 import { IAdminFormItem } from "../../../types";
 import { url } from "../../../consts";
 import "./styles.sass";
+import { useState } from "react";
+import Loader from "../../Loader";
 
 // const formElements: { [type in adminFormItemTypes]: JSX.Element } = {
 //   string:  <FormInput value="" />,
@@ -165,6 +167,13 @@ const ModalAdmin = <T extends { [key in keyof T]: IAdminFormItem }>({
   axiosMethod,
   closeModal,
 }: React.PropsWithChildren<IModalAdmin<T>>) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const sendData = async () => {
+    setLoading(true);
+    await axiosMethod();
+    setLoading(false);
+  };
   return (
     <ModalComponent
       open={isOpenModal}
@@ -203,13 +212,16 @@ const ModalAdmin = <T extends { [key in keyof T]: IAdminFormItem }>({
             title="Отменить"
             modificator="admin-modal-btn"
             onClick={closeModal}
+            disabled={loading}
             isBlack
           />
           <BaseButton
             title={isEditMode ? "Изменить" : "Добавить"}
             modificator="admin-modal-btn add-btn"
-            onClick={() => axiosMethod()}
+            onClick={sendData}
+            disabled={loading}
           />
+          {loading && <Loader size="small" />}
         </Row>
       </Row>
     </ModalComponent>

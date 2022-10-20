@@ -11,7 +11,6 @@ import PhoneInput from "../../PhoneInput";
 import FormCheckbox from "../../FormCheckbox";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
-import axios from "axios";
 import { IVacancy } from "../../../types";
 import {
   addNotification,
@@ -60,6 +59,8 @@ const ModalApplication = ({
     ...initApplicationData,
   });
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const closeApplicationModal = () => {
     closeModal();
     setFormData({ ...initApplicationData });
@@ -72,13 +73,14 @@ const ModalApplication = ({
 
   const createCandidate = async () => {
     try {
+      setLoading(true);
       const { name, second_name, phone, vacancy, date_birthday } = formData;
       const findVacancy = vacancies.find(
         ({ vacancy_name }) => vacancy_name === vacancy
       );
 
-      const isValidate = Object.values(formData).every(val => Boolean(val))
-      
+      const isValidate = Object.values(formData).every((val) => Boolean(val));
+
       if (findVacancy && isValidate) {
         const date = date_birthday?.toISOString(); // moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
         const response = await fetch(
@@ -110,17 +112,32 @@ const ModalApplication = ({
           }
         );
         const result = await response.json();
-
-        if (result.IsOk) {
-          addSuccessNotification(
-            `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
-          );
-          closeApplicationModal();
+        if (response.ok) {
+          if (result.IsOk) {
+            addSuccessNotification(
+              `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
+            );
+            closeApplicationModal();
+          } else {
+            addNotification({
+              type: "danger",
+              title: "Ошибка",
+              message: "Возникла ошибка при создании заявки",
+            });
+          }
         } else {
           addNotification({
             type: "danger",
             title: "Ошибка",
-            message: "Возникла ошибка при создании заявки",
+            message:
+              (result.errors &&
+                Object.keys(result.errors).map((err, index) => (
+                  <p key={index} style={{ margin: "5px 0" }}>
+                    {result.errors[err]}
+                  </p>
+                ))) ||
+              result.Detail ||
+              `Возникла ошибка при создании заявки`,
           });
         }
       } else {
@@ -130,26 +147,15 @@ const ModalApplication = ({
         });
       }
     } catch (error) {
-      console.log((error as any)?.response);
-
-      addNotification({
-        type: "danger",
-        title: "Ошибка",
-        message:
-          ((error as any)?.response?.data?.errors &&
-            Object.keys((error as any)?.response?.data?.errors).map((err) => (
-              <p style={{ margin: "5px 0" }}>
-                {(error as any)?.response?.data?.errors[err]}
-              </p>
-            ))) ||
-          (error as any)?.response?.data?.Detail ||
-          `Возникла ошибка при создании заявки`,
-      });
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    isOpenModal && selectedVacancy &&
+    isOpenModal &&
+      selectedVacancy &&
       setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
   }, [selectedVacancy, isOpenModal]);
 
@@ -302,6 +308,7 @@ const ModalApplication = ({
             title="Отправить заявку"
             modificator="application-btn"
             onClick={createCandidate}
+            disabled={loading}
           />
         </Row>
       </div>

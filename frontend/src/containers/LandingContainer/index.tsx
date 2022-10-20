@@ -1,72 +1,25 @@
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
-import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import BaseButton from "../../components/BaseButton";
 import VacancyItem from "../../components/LandingComponents/VacancyItem";
+import EmptyBlock from "../../components/EmptyBlock";
+import Loader from "../../components/Loader";
+import ModalApplication from "../../components/modals/ModalApplication";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
-import icon1 from "../../assets/icon1.png";
-import icon2 from "../../assets/icon2.png";
-import icon3 from "../../assets/icon3.png";
-import icon4 from "../../assets/icon4.png";
+import { getVacancies } from "../../store/types/Vacancies";
+import { landingConts } from "../../consts";
+import { IVacancy } from "../../types";
 import banner from "../../assets/banner.png";
 import worker from "../../assets/worker.png";
-
-import { getVacancies } from "../../store/types/Vacancies";
-import ModalApplication from "../../components/modals/ModalApplication";
 import "./styles.sass";
-import { IVacancy } from "../../types";
-import EmptyBlock from "../../components/EmptyBlock";
-
-const steps = [
-  {
-    title: "Выберите одну из вакансий на этой странице",
-  },
-  {
-    title:
-      "Оставьте свои контактные данные и после обработки анкеты мы вам перезвоним",
-  },
-  {
-    title: "Выберите удобную торговую точку и приходите на собеседование",
-  },
-];
-
-const properties = [
-  {
-    icon: { img: icon1, width: 63 },
-    title: "В нашей сети уже более 850 магазинов, и мы постоянно растём!",
-  },
-  {
-    icon: { img: icon2, width: 93 },
-    title:
-      "Мы создаем сильную команду из активных и целеустремлённых сотрудников!",
-  },
-  {
-    icon: { img: icon3, width: 73 },
-    title: "Мы мотивируем двигаться вперёд и развиваться вместе!",
-  },
-  {
-    icon: { img: icon4, width: 62 },
-    title: "У нас дружный коллектив, гибкий график и удобное месторасположение",
-  },
-];
-
-const terms = [
-  "Работа рядом с домом. Можете выбрать ближайший супермаркет",
-  "Гибкий график работы: 5/2, 2/2 и другие",
-  "Официальное оформление по ТК РФ с 1-го рабочего дня + соц. пакет",
-  "Белая заработная плата, выплата 2 раза в месяц",
-  "Ежемесячные премии-надбавки",
-  "Возможность карьерного роста",
-  "Премии и призы по результатам профессиональных и творческих конкурсов",
-  "Корпоративная скидка в магазинах сети до 10% («Пятерочка», «Перекресток», «Карусель»)",
-];
 
 const LandingContainer = () => {
   const dispatch = useAppDispatch();
   const { selected_city } = useAppSelector((state) => state.cities);
   const vacancies = useAppSelector((state) => state.vacancies);
+  const loading = useAppSelector((state) => state.loading);
 
   const [isOpenModalApplication, setIsOpenModalApplication] =
     useState<boolean>(false);
@@ -84,6 +37,8 @@ const LandingContainer = () => {
   useEffect(() => {
     selected_city && dispatch(getVacancies(selected_city));
   }, [selected_city]);
+
+  const { properties, steps, terms } = landingConts;
 
   return (
     <>
@@ -200,25 +155,29 @@ const LandingContainer = () => {
         </div>
 
         <div className="landing__row-panel mainpage_vacancies" id="vacancies">
-          <div className="container">
-            <p className="block-title">
-              Открытые <span className="green-back">вакансии</span>
-            </p>
-            {Boolean(vacancies.length) ? (
-              <Row gutter={[18, 18]}>
-                {vacancies.map((vacancy) => (
-                  <Col xl={8} xs={24} key={vacancy.vacancy_id}>
-                    <VacancyItem
-                      vacancy={vacancy}
-                      openModalApplication={openModalApplication}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            ) : (
-              <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
-            )}
-          </div>
+          {loading ? (
+            <Loader size="big" />
+          ) : (
+            <div className="container">
+              <p className="block-title">
+                Открытые <span className="green-back">вакансии</span>
+              </p>
+              {Boolean(vacancies.length) ? (
+                <Row gutter={[18, 18]}>
+                  {vacancies.map((vacancy) => (
+                    <Col xl={8} xs={24} key={vacancy.vacancy_id}>
+                      <VacancyItem
+                        vacancy={vacancy}
+                        openModalApplication={openModalApplication}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+              )}
+            </div>
+          )}
         </div>
       </div>
       <ModalApplication
