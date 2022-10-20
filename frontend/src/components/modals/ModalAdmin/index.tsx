@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Col, Row } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import ModalComponent from "../ModalComponent";
@@ -5,11 +6,10 @@ import FormInput from "../../FormInput";
 import BaseButton from "../../BaseButton";
 import SelectInput from "../../SelectInput";
 import UploadImage from "../../UploadImage";
-import { IAdminFormItem } from "../../../types";
-import { url } from "../../../consts";
-import "./styles.sass";
-import { useState } from "react";
 import Loader from "../../Loader";
+import { addNotification } from "../../../utils/notifications";
+import { IAdminFormItem } from "../../../types";
+import "./styles.sass";
 
 // const formElements: { [type in adminFormItemTypes]: JSX.Element } = {
 //   string:  <FormInput value="" />,
@@ -171,7 +171,25 @@ const ModalAdmin = <T extends { [key in keyof T]: IAdminFormItem }>({
 
   const sendData = async () => {
     setLoading(true);
-    await axiosMethod();
+
+    const isValidate = Object.keys(formData)
+      .filter((key) => formData[key as keyof T].type !== "hidden")
+      .every((key) => {
+        const field = formData[key as keyof T];
+
+        return Boolean(
+          field.value.preview ||
+            field.value.length ||
+            (typeof field.value === "number" && field.value)
+        );
+      });
+
+    isValidate
+      ? await axiosMethod()
+      : addNotification({
+          type: "warning",
+          title: "Не все поля заполнены",
+        });
     setLoading(false);
   };
   return (

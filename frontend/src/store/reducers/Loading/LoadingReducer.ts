@@ -1,6 +1,6 @@
 import { SET_LOADING } from "../../types/Loading";
 
-const initialState = true;
+const initialState = false;
 
 const LoadingReducer = (state = initialState, action: any) => {
   switch (action.type) {

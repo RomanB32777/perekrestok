@@ -9,6 +9,7 @@ import ModalCitySelect from "../../components/modals/ModalCitySelect";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
+  getCities,
   getSelectedCity,
   removeSelectedCity,
   setSelectedCity,
@@ -25,6 +26,10 @@ const MainContainer = () => {
 
   const openModal = () => setIsOpenModal(true);
   const closeModal = () => setIsOpenModal(false);
+
+  useEffect(() => {
+    dispatch(getCities());
+  }, [])
 
   useEffect(() => {
     if (cities.length) {
