@@ -22,15 +22,24 @@ services:
   db:
     image: postgres:13-alpine
     volumes:
-      # - pg_data:/var/lib/postgresql/data/
+      - pg_data:/var/lib/postgresql/data/
       # - ./dump.sql:/docker-entrypoint-initdb.d/dummy_dump.sql
-      - ./database.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      # - ./database.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     expose:
       - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=NenadoTak1987
       - POSTGRES_DB=perek
+    networks:
+      - web
+
+  cors:
+    build: 
+      context: ./cors
+      dockerfile: Dockerfile
+    ports:
+      - "8010:8010"
     networks:
       - web
 
@@ -43,6 +52,7 @@ services:
         - NODE_ENV=production
     depends_on:
       - backend
+      - cors
     ports:
       - "8000:80"
     networks:

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
 import { IVacancy } from "../../../types";
 import { addNotification } from "../../../utils/notifications";
+import { baseURL } from "../../../axiosClient";
 import "./styles.sass";
 
 interface IApplicationData {
@@ -76,6 +77,14 @@ const ModalApplication = ({
     setNotificationModalState({ ...initNotificationModal });
   };
 
+  const openErrorModal = (message: React.ReactNode) => {
+    setExistError(true);
+    setNotificationModalState({
+      isOpen: true,
+      message,
+    });
+  };
+
   const closeNotificationModal = () => {
     setNotificationModalState({ ...initNotificationModal });
     !existError && closeApplicationModal();
@@ -100,7 +109,7 @@ const ModalApplication = ({
       if (findVacancy && isValidate) {
         const date = date_birthday?.toISOString(); // moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
         const response = await fetch(
-          "https://api.skillaz.ru/open-api/objects/candidates",
+          `${baseURL}/proxy/open-api/objects/candidates`, //  "http://localhost:8010/proxy/open-api/objects/candidates"
           {
             method: "POST",
             mode: "cors", // no-cors, *cors, same-origin
@@ -135,35 +144,20 @@ const ModalApplication = ({
               message:
                 "Ваша заявка успешно отправлена! В ближайшее время с вами свяжутся наши специалисты",
             });
-            // addSuccessNotification(
-            //   `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
-            // );
           } else {
-            setExistError(true);
-            setNotificationModalState({
-              isOpen: true,
-              message: "Возникла ошибка при создании заявки",
-            });
-            // addNotification({
-            //   type: "danger",
-            //   title: "Ошибка",
-            //   message: "",
-            // });
+            openErrorModal("Возникла ошибка при создании заявки");
           }
         } else {
-          setExistError(true);
-          setNotificationModalState({
-            isOpen: true,
-            message:
-              (result.errors &&
-                Object.keys(result.errors).map((err, index) => (
-                  <p key={index} style={{ margin: "5px 0" }}>
-                    {result.errors[err]}
-                  </p>
-                ))) ||
+          openErrorModal(
+            (result.errors &&
+              Object.keys(result.errors).map((err, index) => (
+                <p key={index} style={{ margin: "5px 0" }}>
+                  {result.errors[err]}
+                </p>
+              ))) ||
               result.Detail ||
-              "Возникла ошибка при создании заявки",
-          });
+              "Возникла ошибка при создании заявки"
+          );
         }
       } else {
         addNotification({
@@ -172,7 +166,9 @@ const ModalApplication = ({
         });
       }
     } catch (error) {
-      console.log(error);
+      openErrorModal(
+        (error as any).message || "Возникла ошибка при создании заявки"
+      );
     } finally {
       setLoading(false);
     }
