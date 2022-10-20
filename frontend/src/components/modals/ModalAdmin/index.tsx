@@ -131,7 +131,8 @@ const renderFormComponent = <T extends { [key in keyof T]: IAdminFormItem }>({
       return (
         <UploadImage
           formats={["PNG", "JPG", "JPEG"]}
-          filePreview={value.preview || url + value}
+          filePreview={value.preview}
+          imgName={typeof value === "string" ? value : null}
           setFile={({ preview, file }) =>
             setFormData({
               ...formData,

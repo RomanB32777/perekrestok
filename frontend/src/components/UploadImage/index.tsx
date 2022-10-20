@@ -24,7 +24,7 @@ const UploadImage = ({
   isBanner,
 }: {
   label?: string;
-  imgName?: string;
+  imgName?: string | null;
   formats?: string[];
   disabled?: boolean;
   filePreview?: string;

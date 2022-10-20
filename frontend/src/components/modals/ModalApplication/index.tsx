@@ -70,57 +70,50 @@ const ModalApplication = ({
     navigate("terms");
   };
 
-  //   const response = await fetch(baseURL +   url, { //
-  //     method: 'POST', // *GET, POST, PUT, DELETE, etc.
-  //     mode: 'cors', // no-cors, *cors, same-origin
-  //     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-  //     credentials: 'same-origin', // include, *same-origin, omit
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //       // 'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //     redirect: 'follow', // manual, *follow, error
-  //     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-  //     body: JSON.stringify(data) // body data type must match "Content-Type" header
-  //   });
-  //   const result = await response.json()
-  //   return result; // parses JSON response into native JavaScript objects
-  // }
-
   const createCandidate = async () => {
     try {
       const { name, second_name, phone, vacancy, date_birthday } = formData;
       const findVacancy = vacancies.find(
         ({ vacancy_name }) => vacancy_name === vacancy
       );
-      if (findVacancy) {
+
+      const isValidate = Object.values(formData).every(val => Boolean(val))
+      
+      if (findVacancy && isValidate) {
         const date = date_birthday?.toISOString(); // moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
-        const { data } = await axios.post(
+        const response = await fetch(
           "https://api.skillaz.ru/open-api/objects/candidates",
           {
-            VacancyId: findVacancy.vacancy_id,
-            FirstName: name,
-            LastName: second_name,
-            Source: "Unknown",
-            AddWay: "Unknown",
-            PhoneNumber: phone.phone,
-            BirthDate: date,
-            CommonCandidateInfo: {
-              City: selected_city,
-              Country: country,
-            },
-          },
-          {
+            method: "POST",
+            mode: "cors", // no-cors, *cors, same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            // credentials: "same-origin", // include, *same-origin, omit
             headers: {
-              "Access-Control-Allow-Origin": "*",
               "Content-Type": "application/json",
               Authorization: `Bearer ${authToken}`,
             },
+            // redirect: "follow", // manual, *follow, error
+            referrerPolicy: "strict-origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify({
+              VacancyId: findVacancy.vacancy_id,
+              FirstName: name,
+              LastName: second_name,
+              Source: "Unknown",
+              AddWay: "Unknown",
+              PhoneNumber: phone.phone,
+              BirthDate: date,
+              CommonCandidateInfo: {
+                City: selected_city,
+                Country: country,
+              },
+            }),
           }
         );
-        if (data.IsOk) {
+        const result = await response.json();
+
+        if (result.IsOk) {
           addSuccessNotification(
-            `Ваша заявка принята! Номер кандидата - ${data.CandidateId}`
+            `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
           );
           closeApplicationModal();
         } else {
@@ -130,6 +123,11 @@ const ModalApplication = ({
             message: "Возникла ошибка при создании заявки",
           });
         }
+      } else {
+        addNotification({
+          type: "warning",
+          title: "Не все поля заполнены",
+        });
       }
     } catch (error) {
       console.log((error as any)?.response);
@@ -151,9 +149,9 @@ const ModalApplication = ({
   };
 
   useEffect(() => {
-    selectedVacancy &&
+    isOpenModal && selectedVacancy &&
       setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
-  }, [selectedVacancy]);
+  }, [selectedVacancy, isOpenModal]);
 
   const {
     name,

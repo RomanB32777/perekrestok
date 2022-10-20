@@ -65,10 +65,24 @@ class CityController {
         {}
       );
 
-      const cities = citiesQuery.rows.map((city) => ({
-        ...city,
-        vacancies: vacancies[city.city_name],
-      }));
+      const emptyCities = Object.keys(vacancies).filter((city) =>
+        vacancies[city].some((v) => !v)
+      );
+
+      if (emptyCities.length) {
+        await db.query(
+          `DELETE FROM cities WHERE city_name in (${emptyCities
+            .map((v) => `'${v}'`)
+            .join(", ")}) RETURNING *;`
+        );
+      }
+
+      const cities = citiesQuery.rows
+        .filter((city) => emptyCities.indexOf(city.city_name) < 0)
+        .map((city) => ({
+          ...city,
+          vacancies: vacancies[city.city_name],
+        }));
 
       res.status(200).json(cities);
     } catch (error) {
