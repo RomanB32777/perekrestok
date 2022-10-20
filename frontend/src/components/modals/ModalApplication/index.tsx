@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { CountryPhoneInputValue } from "antd-country-phone-input";
-import ModalComponent from "../ModalComponent";
+import ModalComponent, { NotificationModalComponent } from "../ModalComponent";
 import FormInput from "../../FormInput";
 import BaseButton from "../../BaseButton";
 import SelectInput from "../../SelectInput";
@@ -12,10 +12,7 @@ import FormCheckbox from "../../FormCheckbox";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
 import { IVacancy } from "../../../types";
-import {
-  addNotification,
-  addSuccessNotification,
-} from "../../../utils/notifications";
+import { addNotification } from "../../../utils/notifications";
 import "./styles.sass";
 
 interface IApplicationData {
@@ -42,6 +39,16 @@ const initApplicationData: IApplicationData = {
   agreement: false,
 };
 
+interface INotificationModal {
+  isOpen: boolean;
+  message: React.ReactNode;
+}
+
+const initNotificationModal: INotificationModal = {
+  isOpen: false,
+  message: "",
+};
+
 const ModalApplication = ({
   isOpenModal,
   selectedVacancy,
@@ -58,12 +65,20 @@ const ModalApplication = ({
   const [formData, setFormData] = useState<IApplicationData>({
     ...initApplicationData,
   });
-
+  const [notificationModalState, setNotificationModalState] =
+    useState<INotificationModal>(initNotificationModal);
+  const [existError, setExistError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const closeApplicationModal = () => {
     closeModal();
     setFormData({ ...initApplicationData });
+    setNotificationModalState({ ...initNotificationModal });
+  };
+
+  const closeNotificationModal = () => {
+    setNotificationModalState({ ...initNotificationModal });
+    !existError && closeApplicationModal();
   };
 
   const goToTermsPage = () => {
@@ -74,6 +89,7 @@ const ModalApplication = ({
   const createCandidate = async () => {
     try {
       setLoading(true);
+      setExistError(false);
       const { name, second_name, phone, vacancy, date_birthday } = formData;
       const findVacancy = vacancies.find(
         ({ vacancy_name }) => vacancy_name === vacancy
@@ -114,21 +130,30 @@ const ModalApplication = ({
         const result = await response.json();
         if (response.ok) {
           if (result.IsOk) {
-            addSuccessNotification(
-              `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
-            );
-            closeApplicationModal();
+            setNotificationModalState({
+              isOpen: true,
+              message:
+                "Ваша заявка успешно отправлена! В ближайшее время с вами свяжутся наши специалисты",
+            });
+            // addSuccessNotification(
+            //   `Ваша заявка принята! Номер кандидата - ${result.CandidateId}`
+            // );
           } else {
-            addNotification({
-              type: "danger",
-              title: "Ошибка",
+            setExistError(true);
+            setNotificationModalState({
+              isOpen: true,
               message: "Возникла ошибка при создании заявки",
             });
+            // addNotification({
+            //   type: "danger",
+            //   title: "Ошибка",
+            //   message: "",
+            // });
           }
         } else {
-          addNotification({
-            type: "danger",
-            title: "Ошибка",
+          setExistError(true);
+          setNotificationModalState({
+            isOpen: true,
             message:
               (result.errors &&
                 Object.keys(result.errors).map((err, index) => (
@@ -137,7 +162,7 @@ const ModalApplication = ({
                   </p>
                 ))) ||
               result.Detail ||
-              `Возникла ошибка при создании заявки`,
+              "Возникла ошибка при создании заявки",
           });
         }
       } else {
@@ -170,149 +195,151 @@ const ModalApplication = ({
   } = formData;
 
   return (
-    <ModalComponent
-      open={isOpenModal}
-      title=""
-      onCancel={closeApplicationModal}
-      modificator="application-modificator"
-      width={1280}
-      topModal
-    >
-      <div className="application-modal">
-        <h1 className="application-title">
-          Заполните <span className="green-back">заявку</span> и мы вам
-          перезвоним!
-        </h1>
-        {/* <Form
-          form={form}
-          name="register"
-          onFinish={createCandidate}
-          scrollToFirstError
-          layout="vertical"
-        >
-        const [form] = Form.useForm();
-        </Form> */}
-        <Row
-          gutter={[0, 18]}
-          className="application-modal-form"
-          justify="start"
-        >
-          <Col span={24}>
-            <div className="form-element">
-              <FormInput
-                value={name}
-                placeholder="Имя"
-                setValue={(value) => setFormData({ ...formData, name: value })}
-              />
-            </div>
-          </Col>
-          <Col span={24}>
-            <div className="form-element">
-              <FormInput
-                value={second_name}
-                placeholder="Фамилия"
-                setValue={(value) =>
-                  setFormData({ ...formData, second_name: value })
-                }
-              />
-            </div>
-          </Col>
+    <>
+      <ModalComponent
+        open={isOpenModal}
+        title=""
+        onCancel={closeApplicationModal}
+        modificator="application-modificator"
+        width={1280}
+        topModal
+      >
+        <div className="application-modal">
+          <h1 className="application-title">
+            Заполните <span className="green-back">заявку</span> и мы вам
+            перезвоним!
+          </h1>
+          <Row
+            gutter={[0, 18]}
+            className="application-modal-form"
+            justify="start"
+          >
+            <Col span={24}>
+              <div className="form-element">
+                <FormInput
+                  value={name}
+                  placeholder="Имя"
+                  setValue={(value) =>
+                    setFormData({ ...formData, name: value })
+                  }
+                />
+              </div>
+            </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <FormInput
+                  value={second_name}
+                  placeholder="Фамилия"
+                  setValue={(value) =>
+                    setFormData({ ...formData, second_name: value })
+                  }
+                />
+              </div>
+            </Col>
 
-          <Col span={24}>
-            <div className="form-element">
-              <PhoneInput
-                value={phone}
-                setValue={(val) =>
-                  setFormData({
-                    ...formData,
-                    phone: val,
-                  })
-                }
-              />
-            </div>
-          </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <PhoneInput
+                  value={phone}
+                  setValue={(val) =>
+                    setFormData({
+                      ...formData,
+                      phone: val,
+                    })
+                  }
+                />
+              </div>
+            </Col>
 
-          <Col span={24}>
-            <div className="form-element">
-              <SelectInput
-                placeholder="Страна"
-                list={countries.map((c) => ({ key: c, value: c }))}
-                value={country}
-                setValue={(value) =>
-                  setFormData({
-                    ...formData,
-                    country: value as string,
-                  })
-                }
-              />
-            </div>
-          </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <SelectInput
+                  placeholder="Страна"
+                  list={countries.map((c) => ({ key: c, value: c }))}
+                  value={country}
+                  setValue={(value) =>
+                    setFormData({
+                      ...formData,
+                      country: value as string,
+                    })
+                  }
+                />
+              </div>
+            </Col>
 
-          <Col span={24}>
-            <div className="form-element">
-              <FormDatePicker
-                value={date_birthday}
-                setValue={(val) =>
-                  setFormData({
-                    ...formData,
-                    date_birthday: val,
-                  })
-                }
-                placeholder="Дата рождения"
-              />
-            </div>
-          </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <FormDatePicker
+                  value={date_birthday}
+                  setValue={(val) =>
+                    setFormData({
+                      ...formData,
+                      date_birthday: val,
+                    })
+                  }
+                  placeholder="Дата рождения"
+                />
+              </div>
+            </Col>
 
-          <Col span={24}>
-            <div className="form-element">
-              <SelectInput
-                placeholder="Вакансия"
-                list={vacancies.map(({ vacancy_name }) => ({
-                  key: vacancy_name,
-                  value: vacancy_name,
-                }))}
-                value={vacancy}
-                setValue={(value) =>
-                  setFormData({
-                    ...formData,
-                    vacancy: value as string,
-                  })
-                }
-              />
-            </div>
-          </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <SelectInput
+                  placeholder="Вакансия"
+                  list={vacancies.map(({ vacancy_name }) => ({
+                    key: vacancy_name,
+                    value: vacancy_name,
+                  }))}
+                  value={vacancy}
+                  setValue={(value) =>
+                    setFormData({
+                      ...formData,
+                      vacancy: value as string,
+                    })
+                  }
+                />
+              </div>
+            </Col>
 
-          <Col span={24}>
-            <div className="form-element">
-              <FormCheckbox
-                checked={agreement}
-                setValue={(value) =>
-                  setFormData({
-                    ...formData,
-                    agreement: value,
-                  })
-                }
-                label={
-                  <>
-                    Даю согласие на обработку{" "}
-                    <span className="terms-link" onClick={goToTermsPage}>
-                      персональных данных
-                    </span>
-                  </>
-                }
-              />
-            </div>
-          </Col>
+            <Col span={24}>
+              <div className="form-element">
+                <FormCheckbox
+                  checked={agreement}
+                  setValue={(value) =>
+                    setFormData({
+                      ...formData,
+                      agreement: value,
+                    })
+                  }
+                  label={
+                    <>
+                      Даю согласие на обработку{" "}
+                      <span className="terms-link" onClick={goToTermsPage}>
+                        персональных данных
+                      </span>
+                    </>
+                  }
+                />
+              </div>
+            </Col>
 
-          <BaseButton
-            title="Отправить заявку"
-            modificator="application-btn"
-            onClick={createCandidate}
-            disabled={loading}
-          />
-        </Row>
-      </div>
-    </ModalComponent>
+            <BaseButton
+              title="Отправить заявку"
+              modificator="application-btn"
+              onClick={createCandidate}
+              disabled={loading}
+            />
+          </Row>
+        </div>
+      </ModalComponent>
+      <NotificationModalComponent
+        open={notificationModalState.isOpen}
+        onClose={closeNotificationModal}
+        message={notificationModalState.message}
+        existError={existError}
+        showDurationPopup={3000}
+      />
+    </>
   );
 };
 
