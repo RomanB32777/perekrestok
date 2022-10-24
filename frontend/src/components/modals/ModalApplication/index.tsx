@@ -11,12 +11,12 @@ import FormDatePicker from "../../FormDatePicker";
 import PhoneInput from "../../PhoneInput";
 import FormCheckbox from "../../FormCheckbox";
 
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { getCities } from "../../../store/types/Cities";
+import { useAppSelector } from "../../../store/hooks";
 import { addNotification } from "../../../utils/notifications";
 import { IVacancy } from "../../../types";
 import { baseURL } from "../../../axiosClient";
 import { authToken, countries, filterVacancy } from "../../../consts";
+import cities from "./cities.json"
 
 import "./styles.sass";
 
@@ -65,9 +65,8 @@ const ModalApplication = ({
   selectedVacancy: IVacancy | null;
   closeModal: () => void;
 }) => {
-  const dispatch = useAppDispatch();
   const vacancies = useAppSelector((state) => state.vacancies);
-  const { selected_city, cities } = useAppSelector((state) => state.cities);
+  const { selected_city } = useAppSelector((state) => state.cities);
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState<IApplicationData>({
@@ -189,7 +188,7 @@ const ModalApplication = ({
       selectedVacancy &&
         setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
 
-      !filterVacancy && dispatch(getCities());
+      // !filterVacancy && dispatch(getCities());
     }
   }, [selectedVacancy, isOpenModal]);
 
@@ -283,9 +282,9 @@ const ModalApplication = ({
                   <SelectInput
                     showSearch
                     placeholder="Город"
-                    list={cities.map(({ city_name }) => ({
-                      key: city_name,
-                      value: city_name,
+                    list={cities.sort().map(({ city, region }) => ({
+                      key: `${city} - ${region}`,
+                      value: `${city} - ${region}`,
                     }))}
                     value={city || ""}
                     setValue={(value) =>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseButton from "../../components/BaseButton";
 import FormInput from "../../components/FormInput";
-import { adminLogin } from "../../consts";
+import { adminLogin, filterVacancy } from "../../consts";
 import { addNotification } from "../../utils/notifications";
 
 import "./styles.sass";
@@ -29,7 +29,7 @@ const LoginContainer = () => {
     if (login && password) {
       if (login === adminLogin.login && password === adminLogin.password) {
         sessionStorage.setItem("user", JSON.stringify(formData));
-        navigate("/admin/cities");
+        navigate(filterVacancy ? "/admin/cities" : "/admin/vacancies");
       } else {
         addNotification({
           type: "danger",

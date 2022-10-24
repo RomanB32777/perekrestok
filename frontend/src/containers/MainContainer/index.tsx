@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Col, Row } from "antd";
 import clsx from "clsx";
@@ -19,8 +19,6 @@ import { filterVacancy } from "../../consts";
 import { LocationIcon } from "../../icons/icons";
 import "./styles.sass";
 
-// const
-
 const MainContainer = () => {
   const dispatch = useAppDispatch();
   const { selected_city, cities } = useAppSelector((state) => state.cities);
@@ -31,11 +29,11 @@ const MainContainer = () => {
   const closeModal = () => setIsOpenModal(false);
 
   useEffect(() => {
-    dispatch(getCities());
+    filterVacancy && dispatch(getCities());
   }, []);
 
   useEffect(() => {
-    if (filterVacancy && cities.length) {
+    if (cities.length) {
       const storageSelectedCity = getSelectedCity();
       const isExistCity = cities.some(
         (city) => city.city_name === storageSelectedCity
@@ -49,14 +47,6 @@ const MainContainer = () => {
       }
     }
   }, [cities]);
-
-  const component = useMemo(() => {
-    // if (filterVacancy) return <BannerCongressInvite place="webinar" />
-    //   else {
-    //     if (visibleTelegramBanner) return <BannerTelegramInvite />
-    //     return <BannerCongressInvite place="webinar" />
-    //   }
-  }, []);
 
   return (
     <div className="main-container">
@@ -103,7 +93,9 @@ const MainContainer = () => {
         }
       ></HeaderComponent>
       <Outlet />
-      <ModalCitySelect isOpenModal={isOpenModal} closeModal={closeModal} />
+      {filterVacancy && (
+        <ModalCitySelect isOpenModal={isOpenModal} closeModal={closeModal} />
+      )}
       <Footer />
     </div>
   );

@@ -2,7 +2,7 @@ import { useRoutes, RouteObject } from "react-router";
 import AdminContainer from "./containers/AdminContainer";
 import LandingContainer from "./containers/LandingContainer";
 import MainContainer from "./containers/MainContainer";
-import CitiesPage from "./pages/CitiesPage";
+// import CitiesPage from "./pages/CitiesPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import TermsPage from "./pages/TermsPage";
@@ -27,11 +27,11 @@ export const routers: RouteObject[] = [
     path: "admin",
     element: <AdminContainer />,
     children: [
-      {
-        path: "cities",
-        element: <CitiesPage />,
-        id: "Города"
-      },
+      // {
+      //   path: "cities",
+      //   element: <CitiesPage />,
+      //   id: "Города"
+      // },
       {
         path: "vacancies",
         element: <VacanciesPage />,
