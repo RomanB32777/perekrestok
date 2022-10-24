@@ -9,11 +9,13 @@ import FormCheckbox from "../../components/FormCheckbox";
 import Loader from "../../components/Loader";
 import ModalAdmin from "../../components/modals/ModalAdmin";
 import PageTitle from "../../components/PageTitle";
+import { initCityData } from "../../consts";
 import { PencilIcon, TrashBinIcon } from "../../icons/icons";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getCities } from "../../store/types/Cities";
 import { getVacancies } from "../../store/types/Vacancies";
-import { IAdminFormItem, ICity } from "../../types";
+import { ICity, ICityData } from "../../types";
+import { getInitCitiesData } from "../../utils/cities";
 import {
   addNotification,
   addSuccessNotification,
@@ -48,37 +50,19 @@ const SelectDropdown = (menu: React.ReactElement) => {
   );
 };
 
-type ICityData = {
-  [key in keyof ICity]: IAdminFormItem;
-};
-
-const initCityData: ICityData = {
-  city_name: {
-    type: "string",
-    value: "",
-    placeholder: "Введите название города",
-  },
-  vacancies: {
-    type: "select",
-    value: [],
-    list: [],
-    placeholder: "Добавьте вакансии",
-  },
-  prev_city_name: {
-    type: "hidden",
-    value: "",
-  },
-};
-
 const CitiesContainer = () => {
   const dispatch = useAppDispatch();
   const { cities } = useAppSelector((state) => state.cities);
   const vacancies = useAppSelector((state) => state.vacancies);
   const loading = useAppSelector((state) => state.loading);
 
-  const [formData, setFormData] = useState<ICityData>({
-    ...initCityData,
-  });
+  const [formData, setFormData] = useState<ICityData>(initCityData);
+  // getInitCitiesData({
+  //   type: "select",
+  //   value: [],
+  //   list: [],
+  //   placeholder: "Добавьте вакансии",
+  // })
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -114,13 +98,11 @@ const CitiesContainer = () => {
       });
     } else {
       setIsEditMode(false);
-      setFormData({
-        ...initCityData,
-        vacancies: {
-          ...initCityData.vacancies,
+      setFormData(
+        getInitCitiesData({
           list: vacancies.map(({ vacancy_name }) => vacancy_name),
-        },
-      });
+        })
+      );
     }
   };
 
@@ -175,13 +157,11 @@ const CitiesContainer = () => {
   }, []);
 
   useEffect(() => {
-    setFormData({
-      ...formData,
-      vacancies: {
-        ...formData.vacancies,
+    setFormData(
+      getInitCitiesData({
         list: vacancies.map(({ vacancy_name }) => vacancy_name),
-      },
-    });
+      })
+    );
   }, [vacancies]);
 
   return (

@@ -192,6 +192,7 @@ const ModalAdmin = <T extends { [key in keyof T]: IAdminFormItem }>({
         });
     setLoading(false);
   };
+  
   return (
     <ModalComponent
       open={isOpenModal}

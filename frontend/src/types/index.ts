@@ -1,6 +1,6 @@
 import { IVacancy, IVacancyAction } from "./vacancy";
 import { IAdminFormItem, IAdminValueItem } from "./admin";
-import { ICity, ICityAction } from "./city";
+import { ICity, ICityData, ICityAction } from "./city";
 
 interface IFileInfo {
   preview: string;
@@ -21,4 +21,5 @@ export type {
   IVacancy,
   IVacancyAction,
   ILoadingAction,
+  ICityData,
 };

@@ -1,13 +1,4 @@
-import axiosClient from "../axiosClient";
 import { addNotification } from "./notifications";
-
-export const checkIsExistUser = async (token: string) => {
-  const {data} = await axiosClient.post("/api/user/check-user-exist/", { token });
-  console.log(data);
-
-  if (data.notExist) return false;
-  return true;
-};
 
 export const getRandomStr = (length: number) => {
   let result = "";

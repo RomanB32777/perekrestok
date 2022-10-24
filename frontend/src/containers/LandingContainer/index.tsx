@@ -9,7 +9,7 @@ import ModalApplication from "../../components/modals/ModalApplication";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 import { getVacancies } from "../../store/types/Vacancies";
-import { landingConts } from "../../consts";
+import { filterVacancy, landingConts } from "../../consts";
 import { IVacancy } from "../../types";
 import banner from "../../assets/banner.png";
 import worker from "../../assets/worker.png";
@@ -35,7 +35,8 @@ const LandingContainer = () => {
   };
 
   useEffect(() => {
-    selected_city && dispatch(getVacancies(selected_city));
+    if (filterVacancy) selected_city && dispatch(getVacancies(selected_city));
+    else dispatch(getVacancies());
   }, [selected_city]);
 
   const { properties, steps, terms } = landingConts;

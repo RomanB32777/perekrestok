@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
+import { useNavigate } from "react-router-dom";
 import { CountryPhoneInputValue } from "antd-country-phone-input";
+
 import ModalComponent, { NotificationModalComponent } from "../ModalComponent";
 import FormInput from "../../FormInput";
 import BaseButton from "../../BaseButton";
 import SelectInput from "../../SelectInput";
-import { authToken, countries } from "../../../consts";
 import FormDatePicker from "../../FormDatePicker";
 import PhoneInput from "../../PhoneInput";
 import FormCheckbox from "../../FormCheckbox";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../store/hooks";
-import { IVacancy } from "../../../types";
+
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { getCities } from "../../../store/types/Cities";
 import { addNotification } from "../../../utils/notifications";
+import { IVacancy } from "../../../types";
 import { baseURL } from "../../../axiosClient";
+import { authToken, countries, filterVacancy } from "../../../consts";
+
 import "./styles.sass";
 
 interface IApplicationData {
@@ -21,6 +25,7 @@ interface IApplicationData {
   second_name: string;
   phone: CountryPhoneInputValue;
   country: string;
+  city?: string;
   date_birthday: moment.Moment | undefined;
   vacancy: string;
   agreement: boolean;
@@ -34,6 +39,7 @@ const initApplicationData: IApplicationData = {
     phone: "",
     short: "RU",
   },
+  city: "",
   country: "Российская Федерация",
   date_birthday: undefined,
   vacancy: "",
@@ -59,8 +65,9 @@ const ModalApplication = ({
   selectedVacancy: IVacancy | null;
   closeModal: () => void;
 }) => {
+  const dispatch = useAppDispatch();
   const vacancies = useAppSelector((state) => state.vacancies);
-  const { selected_city } = useAppSelector((state) => state.cities);
+  const { selected_city, cities } = useAppSelector((state) => state.cities);
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState<IApplicationData>({
@@ -99,12 +106,15 @@ const ModalApplication = ({
     try {
       setLoading(true);
       setExistError(false);
-      const { name, second_name, phone, vacancy, date_birthday } = formData;
+      // const { name, second_name, phone, country, city, vacancy, date_birthday } = formData;
       const findVacancy = vacancies.find(
         ({ vacancy_name }) => vacancy_name === vacancy
       );
 
-      const isValidate = Object.values(formData).every((val) => Boolean(val));
+      const isValidate = Object.values({
+        ...formData,
+        city: city || selected_city,
+      }).every((val) => Boolean(val));
 
       if (findVacancy && isValidate) {
         const date = date_birthday?.toISOString(); // moment.utc(date_birthday, "DD/MM/YYYY").toISOString();
@@ -130,7 +140,7 @@ const ModalApplication = ({
               PhoneNumber: phone.phone,
               BirthDate: date,
               CommonCandidateInfo: {
-                City: selected_city,
+                City: city || selected_city,
                 Country: country,
               },
             }),
@@ -175,9 +185,12 @@ const ModalApplication = ({
   };
 
   useEffect(() => {
-    isOpenModal &&
+    if (isOpenModal) {
       selectedVacancy &&
-      setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
+        setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
+
+      !filterVacancy && dispatch(getCities());
+    }
   }, [selectedVacancy, isOpenModal]);
 
   const {
@@ -185,6 +198,7 @@ const ModalApplication = ({
     second_name,
     phone,
     country,
+    city,
     vacancy,
     date_birthday,
     agreement,
@@ -262,6 +276,29 @@ const ModalApplication = ({
                 />
               </div>
             </Col>
+
+            {!filterVacancy && (
+              <Col span={24}>
+                <div className="form-element">
+                  <SelectInput
+                    showSearch
+                    placeholder="Город"
+                    list={cities.map(({ city_name }) => ({
+                      key: city_name,
+                      value: city_name,
+                    }))}
+                    value={city || ""}
+                    setValue={(value) =>
+                      setFormData({
+                        ...formData,
+                        city: value as string,
+                      })
+                    }
+                    modificator="city-select"
+                  />
+                </div>
+              </Col>
+            )}
 
             <Col span={24}>
               <div className="form-element">

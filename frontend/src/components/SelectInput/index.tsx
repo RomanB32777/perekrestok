@@ -20,6 +20,7 @@ const SelectInput = ({
   labelCol,
   selectCol,
   isTags,
+  showSearch,
   descriptionSelect,
   dropdownClassName,
   dropdownRightAlign,
@@ -36,6 +37,7 @@ const SelectInput = ({
   labelCol?: number;
   selectCol?: number;
   isTags?: boolean;
+  showSearch?: boolean;
   descriptionSelect?: string;
   dropdownClassName?: string;
   dropdownRightAlign?: boolean;
@@ -71,15 +73,16 @@ const SelectInput = ({
             placeholder={placeholder || ""}
             mode={isTags ? "tags" : undefined}
             onChange={setValue}
-            showArrow
             dropdownRender={dropdownRender}
             menuItemSelectedIcon={null}
             dropdownAlign={
               dropdownRightAlign ? { points: ["tl", "tr"] } : undefined
             }
             popupClassName={dropdownClassName}
-            showSearch={false}
+            showSearch={showSearch}
+            notFoundContent="Данных нет"
             optionLabelProp="label"
+            showArrow
             // disabled={list && Boolean(list.length) ? false : true}
             // open={true}
             // tagRender={prop => <></>}
@@ -89,7 +92,7 @@ const SelectInput = ({
                 const isSelected =
                   Array.isArray(value) && value.includes(item.value);
                 return (
-                  <Option value={item.key} key={item.key} >
+                  <Option value={item.key} key={item.key}>
                     {renderOption
                       ? renderOption(item.value, isSelected)
                       : item.value}

@@ -1,3 +1,4 @@
+import { initCityData } from './cities';
 import { landingConts } from "./landing";
 const url = "/images/";
 
@@ -18,4 +19,6 @@ const adminLogin = {
   password: "12345",
 };
 
-export { url, authToken, countries, adminLogin, landingConts };
+const filterVacancy = process.env.REACT_APP_FILTER_VACANCY !== "false";
+
+export { url, authToken, countries, adminLogin, landingConts, filterVacancy, initCityData };
