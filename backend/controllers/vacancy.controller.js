@@ -58,7 +58,7 @@ class VacancyController {
       res.status(200).json(
         vacancies.rows.map((v) => ({
           ...v,
-          descriptions: v.descriptions.split(","),
+          descriptions: v.descriptions.split("&"),
         }))
       );
     } catch (error) {

@@ -8,6 +8,7 @@ import ConfirmPopup from "../../components/ConfirmPopup";
 import ModalAdmin from "../../components/modals/ModalAdmin";
 import PageTitle from "../../components/PageTitle";
 import EmptyBlock from "../../components/EmptyBlock";
+import Loader from "../../components/Loader";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import axiosClient from "../../axiosClient";
@@ -20,7 +21,8 @@ import { IAdminFormItem, IVacancy } from "../../types";
 import { CrossIcon, PencilIcon, TrashBinIcon } from "../../icons/icons";
 
 import "./styles.sass";
-import Loader from "../../components/Loader";
+
+const { TextArea } = Input;
 
 type IVacancyData = {
   [key in keyof IVacancy]: IAdminFormItem;
@@ -75,12 +77,11 @@ const SelectDropdown = (
   const [name, setName] = useState("");
   const inputRef = useRef<InputRef>(null);
 
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onNameChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setName(event.target.value);
   };
 
-  const addItem = (event?: React.MouseEvent<HTMLDivElement>) => {
-    event && event.preventDefault();
+  const addItem = () => {
     if (setFormData && formData) {
       const descriptions = formData.descriptions;
       setFormData({
@@ -98,21 +99,29 @@ const SelectDropdown = (
     }, 0);
   };
 
+  const onClick = (event?: React.MouseEvent<HTMLDivElement>) => {
+    event && event.preventDefault();
+    addItem();
+  };
+
   return (
     <div className="descriptions-select-dropdown">
       <div>{menu}</div>
-      <Space style={{ padding: "0 8px 4px" }}>
+      <Space style={{ padding: "0 8px 4px" }} align="center">
         <BaseButton
-          onClick={addItem}
+          onClick={onClick}
           modificator="descriptions-modal-btn"
           icon={<PlusOutlined />}
         />
-        <Input
+        <TextArea
           placeholder="Добавить обязанность"
           bordered={false}
           ref={inputRef}
           value={name}
           onChange={onNameChange}
+          style={{ resize: "none", minWidth: "300px" }}
+          autoSize={{ minRows: 1, maxRows: 6 }}
+          onPressEnter={addItem}
         />
       </Space>
     </div>
@@ -230,7 +239,7 @@ const VacanciesContainer = () => {
           const fieldData = formData[field as keyof IVacancy]?.value;
           return {
             ...acc,
-            [field]: Array.isArray(fieldData) ? fieldData.join(",") : fieldData,
+            [field]: Array.isArray(fieldData) ? fieldData.join("&") : fieldData,
           };
         }, {});
 

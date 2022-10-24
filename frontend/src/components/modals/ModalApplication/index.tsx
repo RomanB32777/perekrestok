@@ -40,7 +40,7 @@ const initApplicationData: IApplicationData = {
     short: "RU",
   },
   city: "",
-  country: "Российская Федерация",
+  country: "",
   date_birthday: undefined,
   vacancy: "",
   agreement: false,
@@ -263,7 +263,7 @@ const ModalApplication = ({
             <Col span={24}>
               <div className="form-element">
                 <SelectInput
-                  placeholder="Страна"
+                  placeholder="Гражданство"
                   list={countries.map((c) => ({ key: c, value: c }))}
                   value={country}
                   setValue={(value) =>

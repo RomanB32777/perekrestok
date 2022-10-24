@@ -12,6 +12,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=NenadoTak1987
       - DB_NAME=perek
+      - FILTER_VACANCY=false
     depends_on:
       - db
     networks:
@@ -50,6 +51,7 @@ services:
       args:
         - BACKEND_PORT=5000
         - NODE_ENV=production
+        - FILTER_VACANCY=false
     depends_on:
       - backend
       - cors

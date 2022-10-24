@@ -83,9 +83,10 @@ const SelectInput = ({
             notFoundContent="Данных нет"
             optionLabelProp="label"
             showArrow
+            // placement="topRight"
             // disabled={list && Boolean(list.length) ? false : true}
             // open={true}
-            // tagRender={prop => <></>}
+            // tagRender={(prop) => <></>}
           >
             {list &&
               list.map((item) => {
