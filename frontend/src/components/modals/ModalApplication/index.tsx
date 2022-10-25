@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
 import { CountryPhoneInputValue } from "antd-country-phone-input";
+import moment from "moment";
 
 import ModalComponent, { NotificationModalComponent } from "../ModalComponent";
 import FormInput from "../../FormInput";
@@ -16,7 +17,7 @@ import { addNotification } from "../../../utils/notifications";
 import { IVacancy } from "../../../types";
 import { baseURL } from "../../../axiosClient";
 import { authToken, countries, filterVacancy } from "../../../consts";
-import cities from "./cities.json"
+import cities from "./cities.json";
 
 import "./styles.sass";
 
@@ -134,8 +135,9 @@ const ModalApplication = ({
               VacancyId: findVacancy.vacancy_id,
               FirstName: name,
               LastName: second_name,
-              Source: "Unknown",
-              AddWay: "Unknown",
+              Source: "Other",
+              SfSource: "66",
+              AddWay: "manual",
               PhoneNumber: phone.phone,
               BirthDate: date,
               CommonCandidateInfo: {
@@ -309,6 +311,7 @@ const ModalApplication = ({
                       date_birthday: val,
                     })
                   }
+                  maxDate={moment().set("year", moment().get("year") - 18)}
                   placeholder="Дата рождения"
                 />
               </div>
