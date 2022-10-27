@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Col, Row } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CountryPhoneInputValue } from "antd-country-phone-input";
 import moment from "moment";
 
@@ -70,6 +70,8 @@ const ModalApplication = ({
   const { selected_city } = useAppSelector((state) => state.cities);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [formData, setFormData] = useState<IApplicationData>({
     ...initApplicationData,
   });
@@ -144,6 +146,8 @@ const ModalApplication = ({
                 City: city || selected_city,
                 Country: country,
               },
+              UtmSource: searchParams.get("utm_source") || "",
+              UtmMedium: searchParams.get("utm_medium") || "",
             }),
           }
         );
