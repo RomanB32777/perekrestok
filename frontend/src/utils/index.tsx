@@ -31,3 +31,15 @@ export const copyStr = (str: string) => {
     });
   }
 };
+
+export const scrollToPosition = (top = 0, smooth = true) => {
+  try {
+    window.scroll({
+      top: top,
+      left: 0,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  } catch (_) {
+    window.scrollTo(0, top);
+  }
+};

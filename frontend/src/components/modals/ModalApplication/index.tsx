@@ -14,6 +14,7 @@ import FormCheckbox from "../../FormCheckbox";
 
 import { useAppSelector } from "../../../store/hooks";
 import { addNotification } from "../../../utils/notifications";
+import { scrollToPosition } from "../../../utils";
 import { IVacancy } from "../../../types";
 import { baseURL } from "../../../axiosClient";
 import { authToken, countries, filterVacancy } from "../../../consts";
@@ -101,6 +102,7 @@ const ModalApplication = ({
 
   const goToTermsPage = () => {
     closeApplicationModal();
+    scrollToPosition(0, false);
     navigate("terms");
   };
 
@@ -108,7 +110,6 @@ const ModalApplication = ({
     try {
       setLoading(true);
       setExistError(false);
-      // const { name, second_name, phone, country, city, vacancy, date_birthday } = formData;
       const findVacancy = vacancies.find(
         ({ vacancy_name }) => vacancy_name === vacancy
       );
