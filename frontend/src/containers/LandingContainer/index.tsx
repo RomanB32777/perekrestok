@@ -63,7 +63,6 @@ const LandingContainer = () => {
                     Стань частью{" "}
                     <span className="green-back">нашей команды</span>
                   </h1>
-                  {queryParams}
                   <HashLink to={`${queryParams}#vacancies`} smooth>
                     <BaseButton
                       title="Открытые вакансии"
