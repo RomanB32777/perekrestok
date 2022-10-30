@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Col, Row } from "antd";
+import { useSearchParams } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import BaseButton from "../../components/BaseButton";
 import VacancyItem from "../../components/LandingComponents/VacancyItem";
@@ -16,10 +17,10 @@ import worker from "../../assets/worker.png";
 import "./styles.sass";
 
 const LandingContainer = () => {
+  const [searchParams] = useSearchParams();
   const dispatch = useAppDispatch();
-  const { selected_city } = useAppSelector((state) => state.cities);
-  const vacancies = useAppSelector((state) => state.vacancies);
-  const loading = useAppSelector((state) => state.loading);
+  const { vacancies, cities, loading } = useAppSelector((state) => state);
+  const { selected_city } = cities;
 
   const [isOpenModalApplication, setIsOpenModalApplication] =
     useState<boolean>(false);
@@ -39,6 +40,15 @@ const LandingContainer = () => {
     else dispatch(getVacancies());
   }, [selected_city]);
 
+  const queryParams = useMemo(() => {
+    const params: string[] = [];
+    searchParams.forEach((value, key) => {
+      params.push(`${key}=${value}`);
+    });
+    if (params.length) return `?${params.join("&")}`;
+    return "";
+  }, [searchParams]);
+
   const { properties, steps, terms } = landingConts;
 
   return (
@@ -50,14 +60,11 @@ const LandingContainer = () => {
               <Col lg={10} xs={24}>
                 <div className="landing__banner__content">
                   <h1 className="landing__banner__title">
-                    Работа в <span className="green-back">Перекрестке</span>
+                    Стань частью{" "}
+                    <span className="green-back">нашей команды</span>
                   </h1>
-                  <p className="landing__banner__subtitle">
-                    Уверенность в будущем!
-                  </p>
-                  {/* <Link to="/login">login</Link>{" "}
-                  <Link to="/admin/cities">admin</Link> */}
-                  <HashLink to="#vacancies" smooth>
+                  {queryParams}
+                  <HashLink to={`${queryParams}#vacancies`} smooth>
                     <BaseButton
                       title="Открытые вакансии"
                       onClick={() => {}}

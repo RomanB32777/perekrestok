@@ -1,8 +1,9 @@
 import { Col, Row } from "antd";
 import { Header } from "antd/lib/layout/layout";
 import clsx from "clsx";
-import { MenuMobileIcon } from "../../../icons/icons";
 import Logo from "../LogoComponent";
+import { filterVacancy } from "../../../consts";
+import { MenuMobileIcon } from "../../../icons/icons";
 import "./styles.sass";
 
 interface IHeaderComponent {
@@ -44,7 +45,7 @@ const HeaderComponent = ({
       >
         <div className="container header-container">
           <Row
-            justify="space-between"
+            justify="center" //space-between
             align="middle"
             className="header-container-row"
           >
@@ -61,15 +62,24 @@ const HeaderComponent = ({
               </div>
             )}
             {visibleLogo && (
-              <Col lg={8} xs={14}>
-                <div className="header__left">
+              <Col
+                lg={{ span: filterVacancy ? 8 : 24 }}
+                xs={{ span: filterVacancy ? 14 : 24 }}
+              >
+                <div
+                  className={clsx("header__left", {
+                    "only-logo": !filterVacancy,
+                  })}
+                >
                   <Logo navigateUrl={logoUrl || "/"} />
                 </div>
               </Col>
             )}
-            <Col xs={!visibleLogo ? 24 : 8}>
-              <div className="header__right">{children}</div>
-            </Col>
+            {filterVacancy && (
+              <Col xs={!visibleLogo ? 24 : 8}>
+                <div className="header__right">{children}</div>
+              </Col>
+            )}
           </Row>
         </div>
       </Header>

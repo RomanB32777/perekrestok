@@ -146,8 +146,8 @@ const ModalApplication = ({
                 City: city || selected_city,
                 Country: country,
               },
-              UtmSource: searchParams.get("utm_source") || "",
-              UtmMedium: searchParams.get("utm_medium") || "",
+              UtmSource: searchParams.get("utm_source") || "direct",
+              UtmMedium: searchParams.get("utm_medium") || "direct",
             }),
           }
         );
