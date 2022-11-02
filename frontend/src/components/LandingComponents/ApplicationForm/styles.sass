@@ -1,24 +1,18 @@
 @use '../../../commonStyles/variables'
 
-.application-modificator
-    .ant-modal-content
-        background-image: url('../../../assets/bg_form.png')
-        background-size: 65%
-        background-position: 115% 100%
-        background-repeat: no-repeat
+.application-block
+    background-color: variables.$grey-color
+    background-image: url('../../../assets/bg_form.png')
+    background-size: 65%
+    background-position: 115% 100%
+    background-repeat: no-repeat
+    padding: 48px 0
 
-        .ant-modal-body
-            padding: 0
-
-        .modal-content-wrapper
-            padding: 0 52px 10px
-
-.application-modal
     &-form
         width: 50%
 
 .application-title
-    font-family: variables.$jakarta-font
+    font-family: variables.$gilroy-font
     font-weight: 700
     font-size: 35px
     line-height: 35px
@@ -43,11 +37,6 @@
         left: 7px
 
 @media (max-width: 768px)
-    .application-modificator
-        .ant-modal-content
-            .modal-content-wrapper
-                padding: 0
-
     .application-title
         font-size: 25px
         line-height: 30px
@@ -58,10 +47,8 @@
         margin: 20px auto 0
 
 @media (max-width: 992px)
-    .application-modificator
-        .ant-modal-content
-            background-image: none
+    .application-block
+        background-image: none
 
-    .application-modal
         &-form
             width: 100%

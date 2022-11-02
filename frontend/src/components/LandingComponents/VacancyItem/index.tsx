@@ -1,15 +1,26 @@
-import { url } from "../../../consts";
-import { IVacancy } from "../../../types";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import BaseButton from "../../BaseButton";
+import { IVacancy } from "../../../types";
+import { getQueryParams } from "../../../utils";
+import { url } from "../../../consts";
 import "./styles.sass";
+import { HashLink } from "react-router-hash-link";
 
 const VacancyItem = ({
   vacancy,
-  openModalApplication,
+  setSelectedVacancy,
 }: {
   vacancy: IVacancy;
-  openModalApplication: (vacancy: IVacancy) => void;
+  setSelectedVacancy: (vacancy: IVacancy) => void;
 }) => {
+  const [searchParams] = useSearchParams();
+
+  const queryParams = useMemo(
+    () => getQueryParams(searchParams),
+    [searchParams]
+  );
+
   const { vacancy_name, photo_link, descriptions, salary } = vacancy;
 
   return (
@@ -30,14 +41,16 @@ const VacancyItem = ({
                     </li>
                   ))}
               </ul>
-              <div className="description-salary">До {salary} руб.</div>
+              <div className="description-salary">{salary}</div>
             </div>
           </div>
-          <BaseButton
-            title="Заполнить анкету"
-            onClick={() => openModalApplication(vacancy)}
-            modificator="vacancy-btn"
-          />
+          <HashLink to={`${queryParams}#application`} smooth>
+            <BaseButton
+              title="Заполнить анкету"
+              onClick={() => setSelectedVacancy(vacancy)}
+              modificator="vacancy-btn"
+            />
+          </HashLink>
         </div>
       </div>
     </div>

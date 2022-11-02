@@ -7,7 +7,7 @@ create TABLE vacancies(
     vacancy_name VARCHAR(512) DEFAULT '' PRIMARY KEY,
     photo_link VARCHAR(255) DEFAULT '',
     descriptions VARCHAR DEFAULT '',
-    salary INTEGER DEFAULT 0,
+    salary VARCHAR DEFAULT '',
     vacancy_id VARCHAR(30) DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT Now() 
 );

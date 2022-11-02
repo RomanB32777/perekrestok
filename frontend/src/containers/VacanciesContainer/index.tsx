@@ -153,9 +153,9 @@ const initVacancyData: IVacancyData = {
     placeholder: "Добавьте описание",
   },
   salary: {
-    type: "number",
+    type: "string",
     value: "",
-    placeholder: "ЗП, сумма до",
+    placeholder: "ЗП",
   },
   prev_vacancy_name: {
     type: "hidden",

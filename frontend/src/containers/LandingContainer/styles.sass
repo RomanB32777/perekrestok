@@ -17,7 +17,7 @@
 
         &__title
             color: variables.$black-color
-            font-family: variables.$inter-font
+            font-family: variables.$gilroy-font
             font-weight: 600
             font-size: 50px
             line-height: 61px
@@ -26,7 +26,7 @@
 
         &__subtitle
             color: variables.$black-color
-            font-family: variables.$inter-font
+            font-family: variables.$gilroy-font
             font-size: 20px
             line-height: 30px
             font-weight: 400
@@ -87,19 +87,24 @@
 
         .block-title
             margin-bottom: 76px
-            font-family: variables.$inter-font
+            font-family: variables.$gilroy-font
             font-style: normal
-            font-weight: 400
+            font-weight: 600
             font-size: 35px
             line-height: 42px
 
         &.mainpage_steps
-            background: variables.$main-color
+            background-image: url('../../assets/bg_steps.png')
+            background-repeat: no-repeat
+            background-size: cover
 
             .block-title
                 color: variables.$white-color
                 font-weight: 700
                 text-align: center
+
+            @media (max-width: 576px)
+                background-image: url('../../assets/bg_steps_mobile.png')
 
         &.mainpage_properties
             align-items: flex-start
@@ -108,10 +113,13 @@
                 color: variables.$black-color
                 max-width: 650px
 
+                @media (max-width: 680px)
+                    max-width: 350px
+
         &.mainpage_terms
             .block-title
                 color: variables.$black-color
-                font-weight: 700
+                font-weight: 600
                 margin-bottom: 40px
 
                 &.mobile
@@ -135,7 +143,7 @@
                 list-style-type: none
 
             .list-item
-                font-family: variables.$inter-font
+                font-family: variables.$gilroy-font
                 font-style: normal
                 font-weight: 400
                 font-size: 17px
@@ -160,7 +168,7 @@
         &.mainpage_vacancies
             .block-title
                 color: variables.$black-color
-                font-weight: 700
+                font-weight: 600
                 text-align: center
 
         &_item
@@ -184,7 +192,7 @@
 
             .icon
                 margin-bottom: 26px
-                font-family: variables.$jakarta-font
+                font-family: variables.$gilroy-font
                 font-style: normal
                 font-weight: 400
                 font-size: 60px
@@ -194,7 +202,7 @@
 
             .title
                 position: relative
-                font-family: variables.$jakarta-font
+                font-family: variables.$gilroy-font
                 font-style: normal
                 font-weight: 400
                 font-size: 17px

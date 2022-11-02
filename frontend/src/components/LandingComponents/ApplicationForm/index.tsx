@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { CountryPhoneInputValue } from "antd-country-phone-input";
 import moment from "moment";
 
-import ModalComponent, { NotificationModalComponent } from "../ModalComponent";
+import { NotificationModalComponent } from "../../modals/ModalComponent";
 import FormInput from "../../FormInput";
 import BaseButton from "../../BaseButton";
 import SelectInput from "../../SelectInput";
@@ -58,14 +58,10 @@ const initNotificationModal: INotificationModal = {
   message: "",
 };
 
-const ModalApplication = ({
-  isOpenModal,
+const ApplicationForm = ({
   selectedVacancy,
-  closeModal,
 }: {
-  isOpenModal: boolean;
   selectedVacancy: IVacancy | null;
-  closeModal: () => void;
 }) => {
   const vacancies = useAppSelector((state) => state.vacancies);
   const { selected_city } = useAppSelector((state) => state.cities);
@@ -81,8 +77,7 @@ const ModalApplication = ({
   const [existError, setExistError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const closeApplicationModal = () => {
-    closeModal();
+  const clearApplicationForm = () => {
     setFormData({ ...initApplicationData });
     setNotificationModalState({ ...initNotificationModal });
   };
@@ -97,11 +92,10 @@ const ModalApplication = ({
 
   const closeNotificationModal = () => {
     setNotificationModalState({ ...initNotificationModal });
-    !existError && closeApplicationModal();
+    !existError && clearApplicationForm();
   };
 
   const goToTermsPage = () => {
-    closeApplicationModal();
     scrollToPosition(0, false);
     navigate("terms");
   };
@@ -149,6 +143,8 @@ const ModalApplication = ({
               },
               UtmSource: searchParams.get("utm_source") || "direct",
               UtmMedium: searchParams.get("utm_medium") || "direct",
+              UtmCampaign: searchParams.get("utm_campaign") || "direct",
+              UtmContent: searchParams.get("utm_content") || "direct",
             }),
           }
         );
@@ -191,13 +187,11 @@ const ModalApplication = ({
   };
 
   useEffect(() => {
-    if (isOpenModal) {
-      selectedVacancy &&
-        setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
+    selectedVacancy &&
+      setFormData({ ...formData, vacancy: selectedVacancy.vacancy_name });
 
-      // !filterVacancy && dispatch(getCities());
-    }
-  }, [selectedVacancy, isOpenModal]);
+    // !filterVacancy && dispatch(getCities());
+  }, [selectedVacancy]);
 
   const {
     name,
@@ -212,22 +206,15 @@ const ModalApplication = ({
 
   return (
     <>
-      <ModalComponent
-        open={isOpenModal}
-        title=""
-        onCancel={closeApplicationModal}
-        modificator="application-modificator"
-        width={1280}
-        topModal
-      >
-        <div className="application-modal">
+      <div className="application-block" id="application">
+        <div className="container">
           <h1 className="application-title">
             Заполните <span className="green-back">заявку</span> и мы вам
             перезвоним!
           </h1>
           <Row
             gutter={[0, 18]}
-            className="application-modal-form"
+            className="application-block-form"
             justify="start"
           >
             <Col span={24}>
@@ -371,7 +358,7 @@ const ModalApplication = ({
             />
           </Row>
         </div>
-      </ModalComponent>
+      </div>
       <NotificationModalComponent
         open={notificationModalState.isOpen}
         onClose={closeNotificationModal}
@@ -383,4 +370,4 @@ const ModalApplication = ({
   );
 };
 
-export default ModalApplication;
+export default ApplicationForm;

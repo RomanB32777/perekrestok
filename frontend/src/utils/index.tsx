@@ -43,3 +43,18 @@ export const scrollToPosition = (top = 0, smooth = true) => {
     window.scrollTo(0, top);
   }
 };
+
+export const scrollToElement = (hash: string) => {
+  const id = hash.replace("#", "");
+  const element = document.getElementById(id);
+  element && element.scrollIntoView({ block: "center", behavior: "smooth" });
+};
+
+export const getQueryParams = (searchParams: URLSearchParams) => {
+  const params: string[] = [];
+  searchParams.forEach((value, key) => {
+    params.push(`${key}=${value}`);
+  });
+  if (params.length) return `?${params.join("&")}`;
+  return "";
+};

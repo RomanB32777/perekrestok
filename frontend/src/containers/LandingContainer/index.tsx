@@ -1,53 +1,46 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Col, Row } from "antd";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import BaseButton from "../../components/BaseButton";
 import VacancyItem from "../../components/LandingComponents/VacancyItem";
 import EmptyBlock from "../../components/EmptyBlock";
 import Loader from "../../components/Loader";
-import ModalApplication from "../../components/modals/ModalApplication";
+import ApplicationForm from "../../components/LandingComponents/ApplicationForm";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
+import { getQueryParams, scrollToElement } from "../../utils";
 import { getVacancies } from "../../store/types/Vacancies";
 import { filterVacancy, landingConts } from "../../consts";
 import { IVacancy } from "../../types";
 import banner from "../../assets/banner.png";
-import worker from "../../assets/worker.png";
+import worker from "../../assets/workers.jpg";
 import "./styles.sass";
 
 const LandingContainer = () => {
   const [searchParams] = useSearchParams();
+  const { hash } = useLocation();
+  const vacanciesBlock = useRef<HTMLDivElement>(null);
+
   const dispatch = useAppDispatch();
   const { vacancies, cities, loading } = useAppSelector((state) => state);
   const { selected_city } = cities;
 
-  const [isOpenModalApplication, setIsOpenModalApplication] =
-    useState<boolean>(false);
   const [selectedVacancy, setSelectedVacancy] = useState<IVacancy | null>(null);
-
-  const openModalApplication = (vacancy: IVacancy) => {
-    setIsOpenModalApplication(true);
-    setSelectedVacancy(vacancy);
-  };
-
-  const closeModalApplication = () => {
-    setIsOpenModalApplication(false);
-  };
 
   useEffect(() => {
     if (filterVacancy) selected_city && dispatch(getVacancies(selected_city));
     else dispatch(getVacancies());
   }, [selected_city]);
 
-  const queryParams = useMemo(() => {
-    const params: string[] = [];
-    searchParams.forEach((value, key) => {
-      params.push(`${key}=${value}`);
-    });
-    if (params.length) return `?${params.join("&")}`;
-    return "";
-  }, [searchParams]);
+  useEffect(() => {
+    hash && setTimeout(() => scrollToElement(hash), 500);
+  }, [hash]);
+
+  const queryParams = useMemo(
+    () => getQueryParams(searchParams),
+    [searchParams]
+  );
 
   const { properties, steps, terms } = landingConts;
 
@@ -169,29 +162,29 @@ const LandingContainer = () => {
               <p className="block-title">
                 Открытые <span className="green-back">вакансии</span>
               </p>
-              {Boolean(vacancies.length) ? (
-                <Row gutter={[18, 18]}>
-                  {vacancies.map((vacancy) => (
-                    <Col xl={8} xs={24} key={vacancy.vacancy_id}>
-                      <VacancyItem
-                        vacancy={vacancy}
-                        openModalApplication={openModalApplication}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              ) : (
-                <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
-              )}
+              <div ref={vacanciesBlock}>
+                {Boolean(vacancies.length) ? (
+                  <Row gutter={[18, 18]}>
+                    {vacancies.map((vacancy) => (
+                      <Col xl={8} xs={24} key={vacancy.vacancy_id}>
+                        <VacancyItem
+                          vacancy={vacancy}
+                          setSelectedVacancy={(vacancy: IVacancy) => {
+                            setSelectedVacancy(vacancy);
+                          }}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                ) : (
+                  <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+                )}
+              </div>
             </div>
           )}
         </div>
+        <ApplicationForm selectedVacancy={selectedVacancy} />
       </div>
-      <ModalApplication
-        selectedVacancy={selectedVacancy}
-        isOpenModal={isOpenModalApplication}
-        closeModal={closeModalApplication}
-      />
     </>
   );
 };

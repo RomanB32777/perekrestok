@@ -3,7 +3,7 @@ export interface IVacancy {
   prev_vacancy_name: string;
   photo_link: string;
   descriptions: string[];
-  salary: number;
+  salary: string;
   vacancy_id: string;
 }
 
