@@ -47,7 +47,7 @@ export const scrollToPosition = (top = 0, smooth = true) => {
 export const scrollToElement = (hash: string) => {
   const id = hash.replace("#", "");
   const element = document.getElementById(id);
-  element && element.scrollIntoView({ block: "center", behavior: "smooth" });
+  element && element.scrollIntoView({ behavior: "smooth" }); // block: "center",
 };
 
 export const getQueryParams = (searchParams: URLSearchParams) => {

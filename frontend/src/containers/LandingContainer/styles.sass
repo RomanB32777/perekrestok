@@ -125,7 +125,7 @@
                 &.mobile
                     display: none
 
-                @media (max-width: 992px)
+                @media (max-width: 1200px)
                     &.desktop
                         display: none
 
@@ -133,11 +133,18 @@
                         display: block
 
             .block-img
-                width: 100%
                 border-radius: 10px
 
-                @media (max-width: 992px)
-                    margin-bottom: 15px
+                &.mobile
+                    width: 100%
+
+                    @media (max-width: 992px)
+                        margin-bottom: 30px
+
+                &.desktop
+                    max-height: 310px
+                    height: 100%
+                    object-fit: cover
 
             .list
                 list-style-type: none

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Col, Row } from "antd";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
@@ -14,19 +14,19 @@ import { getVacancies } from "../../store/types/Vacancies";
 import { filterVacancy, landingConts } from "../../consts";
 import { IVacancy } from "../../types";
 import banner from "../../assets/banner.png";
-import worker from "../../assets/workers.jpg";
+import workers from "../../assets/workers.jpg";
 import "./styles.sass";
 
 const LandingContainer = () => {
   const [searchParams] = useSearchParams();
   const { hash } = useLocation();
-  const vacanciesBlock = useRef<HTMLDivElement>(null);
 
   const dispatch = useAppDispatch();
   const { vacancies, cities, loading } = useAppSelector((state) => state);
   const { selected_city } = cities;
 
   const [selectedVacancy, setSelectedVacancy] = useState<IVacancy | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (filterVacancy) selected_city && dispatch(getVacancies(selected_city));
@@ -34,8 +34,18 @@ const LandingContainer = () => {
   }, [selected_city]);
 
   useEffect(() => {
-    hash && setTimeout(() => scrollToElement(hash), 500);
-  }, [hash]);
+    const onPageLoad = () => setLoaded(true);
+
+    if (document.readyState === "complete") onPageLoad();
+    else {
+      window.addEventListener("load", onPageLoad);
+      return () => window.removeEventListener("load", onPageLoad);
+    }
+  }, []);
+
+  useEffect(() => {
+    loaded && hash && scrollToElement(hash);
+  }, [loaded, hash]);
 
   const queryParams = useMemo(
     () => getQueryParams(searchParams),
@@ -135,20 +145,27 @@ const LandingContainer = () => {
               Что мы <span className="green-back">предлагаем?</span>
             </p>
             <Row justify="space-around">
-              <Col lg={{ span: 12, order: 0 }} xs={{ span: 24, order: 1 }}>
+              <Col xl={{ order: 0 }} xs={{ span: 24, order: 1 }}>
                 <p className="block-title desktop">
                   Что мы <span className="green-back">предлагаем?</span>
                 </p>
-                <ul className="list">
-                  {terms.map((i, key) => (
-                    <li className="list-item" key={key}>
-                      {i}
-                    </li>
-                  ))}
-                </ul>
+                <Row justify="space-between">
+                  <Col xl={12} xs={24}>
+                    <ul className="list">
+                      {terms.map((i, key) => (
+                        <li className="list-item" key={key}>
+                          {i}
+                        </li>
+                      ))}
+                    </ul>
+                  </Col>
+                  <Col xl={11} xs={0}>
+                    <img src={workers} alt="" className="block-img desktop" />
+                  </Col>
+                </Row>
               </Col>
-              <Col lg={10} xs={24}>
-                <img src={worker} alt="" className="block-img" />
+              <Col xl={0} xs={24}>
+                <img src={workers} alt="" className="block-img mobile" />
               </Col>
             </Row>
           </div>
@@ -162,24 +179,23 @@ const LandingContainer = () => {
               <p className="block-title">
                 Открытые <span className="green-back">вакансии</span>
               </p>
-              <div ref={vacanciesBlock}>
-                {Boolean(vacancies.length) ? (
-                  <Row gutter={[18, 18]}>
-                    {vacancies.map((vacancy) => (
-                      <Col xl={8} xs={24} key={vacancy.vacancy_id}>
-                        <VacancyItem
-                          vacancy={vacancy}
-                          setSelectedVacancy={(vacancy: IVacancy) => {
-                            setSelectedVacancy(vacancy);
-                          }}
-                        />
-                      </Col>
-                    ))}
-                  </Row>
-                ) : (
-                  <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
-                )}
-              </div>
+
+              {Boolean(vacancies.length) ? (
+                <Row gutter={[18, 18]}>
+                  {vacancies.map((vacancy) => (
+                    <Col xl={8} xs={24} key={vacancy.vacancy_id}>
+                      <VacancyItem
+                        vacancy={vacancy}
+                        setSelectedVacancy={(vacancy: IVacancy) => {
+                          setSelectedVacancy(vacancy);
+                        }}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <EmptyBlock description="Вакансий пока нет, но скоро появятся !" />
+              )}
             </div>
           )}
         </div>
