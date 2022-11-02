@@ -19,6 +19,7 @@
     "dockerStop": "docker-compose stop",
     "dockerDown": "docker-compose down",
     "dockerRmiDangling": "docker rmi $(docker images -f dangling=true -q)",
+    "dockerClearVolume": "docker volume rm perekrestok_pg_data",
     "dockerClear": "docker system prune -a -f"
   },
   "author": "Roman <r.bogdanovskiy@onpoint.ru>",
